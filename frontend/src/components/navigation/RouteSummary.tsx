@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@/components/ui/Icon";
 import { formatDuration } from "@/lib/map-geometry";
 import type { RouteResponse } from "@/types/map";
 
@@ -21,32 +22,59 @@ function tourLabel(algorithm: string): string | null {
 }
 
 export function RouteSummary({ route, floorName }: RouteSummaryProps) {
-  const floors = route.floors.map((level) => floorName(level)).join(" → ");
   const tourAlgorithm = tourLabel(route.algorithm);
+  const [distance, unit] = formatRouteMeters(route.distance_m).split(" ");
   return (
-    <section data-testid="route-summary" className="rounded-xl border border-stone-200 bg-white p-4">
-      <h2 className="text-sm font-semibold text-stone-900">
-        {route.from_location} → {route.to_location}
+    <section
+      data-testid="route-summary"
+      className="rise relative overflow-hidden rounded-2xl border border-gold-400/20 bg-gradient-to-br from-gold-400/[0.10] via-white/[0.02] to-transparent p-4"
+    >
+      <div className="flex items-center justify-between">
+        <p className="eyebrow">Your route</p>
+        {route.profile !== "normal" ? (
+          <span className="rounded-full bg-gold-400/15 px-2 py-0.5 text-[11px] font-medium capitalize text-gold-200">
+            {route.profile.replace("_", " ")}
+          </span>
+        ) : null}
+      </div>
+      <h2 className="mt-1 text-sm font-semibold text-mist-50">
+        {route.from_location} <span className="text-gold-300">→</span> {route.to_location}
       </h2>
-      <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+
+      <dl className="mt-4 grid grid-cols-2 gap-3">
         <div>
-          <dt className="text-xs text-stone-500">Distance</dt>
-          <dd className="font-medium text-stone-900">{formatRouteMeters(route.distance_m)}</dd>
+          <dt className="flex items-center gap-1.5 text-[11px] text-mist-500">
+            <Icon name="ruler" size={12} /> Distance
+          </dt>
+          <dd className="font-display text-4xl leading-none text-mist-50">
+            {distance}{" "}
+            <span className="font-sans text-sm text-mist-400">{unit}</span>
+          </dd>
         </div>
         <div>
-          <dt className="text-xs text-stone-500">Time</dt>
-          <dd className="font-medium text-stone-900">{formatDuration(route.estimated_seconds)}</dd>
-        </div>
-        <div>
-          <dt className="text-xs text-stone-500">Floors</dt>
-          <dd className="font-medium text-stone-900">{floors}</dd>
-        </div>
-        <div>
-          <dt className="text-xs text-stone-500">Profile</dt>
-          <dd className="font-medium capitalize text-stone-900">{route.profile.replace("_", " ")}</dd>
+          <dt className="flex items-center gap-1.5 text-[11px] text-mist-500">
+            <Icon name="clock" size={12} /> Time
+          </dt>
+          <dd className="font-display text-4xl leading-none text-mist-50">
+            {formatDuration(route.estimated_seconds).replace(" min", "")}{" "}
+            <span className="font-sans text-sm text-mist-400">min</span>
+          </dd>
         </div>
       </dl>
-      <p className="mt-3 text-[11px] text-stone-400">
+
+      <div className="mt-4 flex flex-wrap items-center gap-1.5">
+        <span className="sr-only">Floors</span>
+        {route.floors.map((level, i) => (
+          <span key={`${level}-${i}`} className="flex items-center gap-1.5">
+            {i > 0 ? <span className="text-mist-500">→</span> : null}
+            <span className="rounded-full border border-white/[0.08] bg-ink-900/60 px-2 py-0.5 text-[11px] font-medium text-mist-200">
+              {floorName(level)}
+            </span>
+          </span>
+        ))}
+      </div>
+
+      <p className="mt-4 border-t border-white/[0.06] pt-3 font-mono text-[10px] tracking-tight text-mist-500">
         {tourAlgorithm !== null
           ? `Tour ordered by ${tourAlgorithm} · ${route.nodes_expanded} A* pair calculations`
           : `Routed by ${route.algorithm.toUpperCase()} · ${route.nodes_expanded} nodes expanded`}

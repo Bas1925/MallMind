@@ -10,6 +10,7 @@ import { RouteInstructions } from "@/components/navigation/RouteInstructions";
 import { RouteSummary } from "@/components/navigation/RouteSummary";
 import { TourPlanner } from "@/components/navigation/TourPlanner";
 import { LocationSearch } from "@/components/search/LocationSearch";
+import { Icon } from "@/components/ui/Icon";
 import { fetchMallMap, requestRoute } from "@/lib/api";
 import { mapErrorMessage, routeErrorMessage } from "@/lib/errors";
 import { continueMessages, routeOnFloor } from "@/lib/map-geometry";
@@ -161,17 +162,22 @@ export function MallExplorer() {
 
   if (mapState.kind === "loading") {
     return (
-      <div className="flex h-dvh items-center justify-center bg-stone-100 text-sm text-stone-500">
-        Loading NOVA Mall…
+      <div className="flex h-dvh flex-col items-center justify-center gap-4 bg-ink-950">
+        <BrandMark />
+        <div className="h-0.5 w-32 overflow-hidden rounded-full bg-white/[0.06]">
+          <div className="h-full w-1/3 animate-[route-flow_1s_linear_infinite] rounded-full bg-gold-400" />
+        </div>
+        <p className="text-xs tracking-wide text-mist-500">Loading NOVA Mall…</p>
       </div>
     );
   }
 
   if (mapState.kind === "error") {
     return (
-      <div className="flex h-dvh flex-col items-center justify-center gap-3 bg-stone-100 px-6 text-center">
-        <h1 className="text-lg font-semibold text-stone-900">Map could not load</h1>
-        <p data-testid="map-error" className="max-w-md text-sm text-stone-600">
+      <div className="flex h-dvh flex-col items-center justify-center gap-3 bg-ink-950 px-6 text-center">
+        <BrandMark />
+        <h1 className="mt-4 font-display text-3xl text-mist-50">Map could not load</h1>
+        <p data-testid="map-error" className="max-w-md text-sm text-mist-400">
           {mapState.message}
         </p>
       </div>
@@ -179,33 +185,50 @@ export function MallExplorer() {
   }
 
   const ready = mapState.payload;
+  const tabs = [
+    { id: "route", label: "Route", icon: "route" },
+    { id: "plan", label: "Plan", icon: "list" },
+    { id: "ask", label: "Ask", icon: "sparkle" },
+  ] as const;
 
   return (
-    <div className="flex h-dvh flex-col bg-stone-100 text-stone-900 md:flex-row">
+    <div className="relative flex h-dvh flex-col overflow-hidden bg-ink-950 text-mist-50 md:flex-row">
+      {/* Ambient light behind the map. */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(232,184,106,0.10),transparent_55%),radial-gradient(ellipse_at_80%_90%,rgba(94,200,255,0.06),transparent_50%)]"
+        aria-hidden
+      />
+
       <section className="relative min-h-0 flex-1">
-        <MallMap
-          payload={ready}
-          floorLevel={floorLevel}
-          selectedId={selectedId}
-          startId={fromId === "" ? null : fromId}
-          endId={toId === "" ? null : toId}
-          route={route}
-          showGraph={showGraph}
-          stops={stops}
-          onSelectLocation={(id) => {
-            if (id === null) {
-              setSelectedId(null);
-              return;
-            }
-            focusLocation(id);
-          }}
-        />
-        <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-col gap-3 p-3 md:p-4">
-          <div className="pointer-events-auto flex flex-wrap items-start justify-between gap-2">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-wide text-stone-500">MallMind</p>
-              <h1 className="text-lg font-semibold text-stone-900">{ready.mall.name}</h1>
+        <div className="absolute inset-0 px-1 pb-12 pt-[7.25rem] sm:pt-24 md:px-10 md:pb-14">
+          <MallMap
+            payload={ready}
+            floorLevel={floorLevel}
+            selectedId={selectedId}
+            startId={fromId === "" ? null : fromId}
+            endId={toId === "" ? null : toId}
+            route={route}
+            showGraph={showGraph}
+            stops={stops}
+            onSelectLocation={(id) => {
+              if (id === null) {
+                setSelectedId(null);
+                return;
+              }
+              focusLocation(id);
+            }}
+          />
+        </div>
+
+        <header className="pointer-events-none absolute inset-x-0 top-0 flex flex-wrap items-start justify-between gap-3 p-3 md:p-5">
+          <div className="pointer-events-auto flex items-center gap-3">
+            <BrandMark />
+            <div className="leading-tight">
+              <p className="eyebrow">MallMind</p>
+              <h1 className="font-display text-2xl text-mist-50">{ready.mall.name}</h1>
             </div>
+          </div>
+          <div className="pointer-events-auto">
             <FloorSelector
               floors={ready.floors}
               activeLevel={floorLevel}
@@ -213,27 +236,34 @@ export function MallExplorer() {
               onChange={setFloorLevel}
             />
           </div>
+        </header>
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-3 flex flex-col items-start gap-1.5 pe-36 ps-3 md:bottom-5 md:items-center md:px-3">
           {routed.messages.map((message) => (
             <p
               key={message}
               data-testid="continue-via"
-              className="pointer-events-auto max-w-md rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm font-medium text-orange-900"
+              className="glass rise pointer-events-auto flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-medium text-gold-200 md:px-3.5 md:text-xs"
             >
+              <Icon name="elevator" size={14} />
               {message}
             </p>
           ))}
         </div>
-        <label className="pointer-events-auto absolute bottom-3 start-3 flex items-center gap-2 rounded-full border border-stone-200 bg-white/95 px-3 py-1.5 text-xs text-stone-600 shadow-sm">
+
+        <label className="glass pointer-events-auto absolute bottom-3 start-3 hidden cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-xs text-mist-400 transition hover:text-mist-50 md:bottom-5 md:start-5 md:flex">
           <input
             type="checkbox"
             checked={showGraph}
             onChange={(event) => setShowGraph(event.target.checked)}
+            className="accent-gold-400"
           />
+          <Icon name="layers" size={13} />
           Show graph
         </label>
         <button
           type="button"
-          className="absolute bottom-3 end-3 rounded-full border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 shadow-sm md:hidden"
+          className="glass absolute bottom-3 end-3 rounded-full px-3.5 py-1.5 text-xs font-semibold text-mist-50 md:hidden"
           onClick={() => setPanelOpen((open) => !open)}
         >
           {panelOpen ? "Hide panel" : "Route & search"}
@@ -241,55 +271,35 @@ export function MallExplorer() {
       </section>
 
       <aside
-        className={
-          panelOpen
-            ? "flex max-h-[48vh] flex-col overflow-hidden border-t border-stone-200 bg-white md:max-h-none md:w-[22.5rem] md:border-s md:border-t-0"
-            : "hidden md:flex md:w-[22.5rem] md:flex-col md:overflow-hidden md:border-s md:border-stone-200 md:bg-white"
-        }
+        className={`${
+          panelOpen ? "flex" : "hidden md:flex"
+        } glass relative z-10 max-h-[52vh] flex-col overflow-hidden rounded-t-3xl md:m-4 md:max-h-none md:w-[24rem] md:rounded-3xl`}
       >
-        <div className="flex-1 space-y-4 overflow-y-auto p-4">
+        <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-white/15 md:hidden" aria-hidden />
+        <div className="space-y-4 border-b border-white/[0.06] p-4 pb-3">
           <LocationSearch locations={locations} onPick={focusLocation} />
-          <div className="flex gap-1" role="tablist" aria-label="Panel">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={panelMode === "route"}
-              className={
-                panelMode === "route"
-                  ? "rounded-full bg-stone-900 px-3 py-1 text-xs font-semibold text-white"
-                  : "rounded-full border border-stone-200 px-3 py-1 text-xs text-stone-600"
-              }
-              onClick={() => setPanelMode("route")}
-            >
-              Route
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={panelMode === "plan"}
-              className={
-                panelMode === "plan"
-                  ? "rounded-full bg-stone-900 px-3 py-1 text-xs font-semibold text-white"
-                  : "rounded-full border border-stone-200 px-3 py-1 text-xs text-stone-600"
-              }
-              onClick={() => setPanelMode("plan")}
-            >
-              Plan
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={panelMode === "ask"}
-              className={
-                panelMode === "ask"
-                  ? "rounded-full bg-stone-900 px-3 py-1 text-xs font-semibold text-white"
-                  : "rounded-full border border-stone-200 px-3 py-1 text-xs text-stone-600"
-              }
-              onClick={() => setPanelMode("ask")}
-            >
-              Ask
-            </button>
+          <div className="grid grid-cols-3 gap-1 rounded-xl bg-ink-950/60 p-1" role="tablist" aria-label="Panel">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={panelMode === tab.id}
+                className={`flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition ${
+                  panelMode === tab.id
+                    ? "bg-ink-700 text-mist-50 shadow"
+                    : "text-mist-500 hover:text-mist-200"
+                }`}
+                onClick={() => setPanelMode(tab.id)}
+              >
+                <Icon name={tab.icon} size={13} />
+                {tab.label}
+              </button>
+            ))}
           </div>
+        </div>
+
+        <div className="scroll-thin flex-1 space-y-4 overflow-y-auto p-4">
           {panelMode === "ask" ? (
             <AssistantPanel
               profile={profile}
@@ -305,32 +315,32 @@ export function MallExplorer() {
             />
           ) : (
             <RouteForm
-            locations={locations}
-            fromId={fromId}
-            toId={toId}
-            profile={profile}
-            loading={routing}
-            onFrom={setFromId}
-            onTo={setToId}
-            onProfile={(next) => {
-              setProfile(next);
-              if (fromId !== "" && toId !== "") {
-                void runRoute(fromId, toId, next);
-              }
-            }}
-            onSubmit={() => {
-              void runRoute(fromId, toId, profile);
-            }}
-            onSwap={() => {
-              setFromId(toId);
-              setToId(fromId);
-            }}
-          />
+              locations={locations}
+              fromId={fromId}
+              toId={toId}
+              profile={profile}
+              loading={routing}
+              onFrom={setFromId}
+              onTo={setToId}
+              onProfile={(next) => {
+                setProfile(next);
+                if (fromId !== "" && toId !== "") {
+                  void runRoute(fromId, toId, next);
+                }
+              }}
+              onSubmit={() => {
+                void runRoute(fromId, toId, profile);
+              }}
+              onSwap={() => {
+                setFromId(toId);
+                setToId(fromId);
+              }}
+            />
           )}
           {routeError !== null ? (
             <p
               data-testid="route-error"
-              className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+              className="rounded-xl border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-sm text-rose-400"
             >
               {routeError}
             </p>
@@ -350,13 +360,30 @@ export function MallExplorer() {
               <RouteSummary route={route} floorName={floorName} />
               <RouteInstructions instructions={route.instructions} />
             </>
-          ) : (
-            <p className="text-xs text-stone-500">
-              Routes come from the backend A* API. The map only draws what the server returns.
+          ) : panelMode === "route" ? (
+            <p className="px-1 text-[11px] leading-relaxed text-mist-500">
+              Every route is computed by the backend A* engine. The map only draws what the server
+              returns.
             </p>
-          )}
+          ) : null}
         </div>
       </aside>
     </div>
+  );
+}
+
+function BrandMark() {
+  return (
+    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-gold-200 via-gold-400 to-gold-500 shadow-glow">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <path
+          d="M4 19V6.5l8 7 8-7V19"
+          stroke="#07090d"
+          strokeWidth={2.4}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
   );
 }

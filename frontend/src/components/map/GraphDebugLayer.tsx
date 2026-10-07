@@ -38,9 +38,9 @@ export function GraphDebugLayer({
             y1={pa.y}
             x2={pb.x}
             y2={pb.y}
-            stroke="#64748b"
-            strokeWidth={0.35}
-            opacity={0.7}
+            stroke="#5ec8ff"
+            strokeWidth={0.3}
+            opacity={0.45}
           />
         );
       })}
@@ -49,8 +49,8 @@ export function GraphDebugLayer({
         const onRoute = routeSet.has(node.id);
         return (
           <g key={node.id} transform={`translate(${p.x} ${p.y})`}>
-            <circle r={0.9} fill={onRoute ? "#c2410c" : "#334155"} />
-            <text y={1.8} textAnchor="middle" style={{ fontSize: 1.6 }} className="fill-slate-600">
+            <circle r={0.9} fill={onRoute ? "#f2cf8a" : "#5ec8ff"} />
+            <text y={1.8} textAnchor="middle" style={{ fontSize: 1.6 }} fill="#7b818c">
               {node.id.slice(0, 4)}
             </text>
           </g>

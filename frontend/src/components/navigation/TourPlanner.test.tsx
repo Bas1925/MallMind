@@ -32,7 +32,7 @@ describe("TourPlanner stop picker", () => {
     await user.type(input, "e");
     const options = within(screen.getByRole("listbox")).getAllByRole("option");
     expect(options.length).toBeGreaterThan(1);
-    const second = options[1]?.querySelector("span")?.textContent ?? "";
+    const second = options[1]?.querySelector(".truncate")?.textContent ?? "";
     expect(options[1]).not.toHaveAttribute("aria-selected", "true");
     await user.keyboard("{ArrowDown}");
     expect(within(screen.getByRole("listbox")).getAllByRole("option")[1]).toHaveAttribute("aria-selected", "true");

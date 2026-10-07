@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { searchLocations } from "@/lib/api";
+import { Icon } from "@/components/ui/Icon";
 import { filterLocations } from "@/lib/location-search";
+import { categoryFill } from "@/lib/map-geometry";
 import type { SearchHit } from "@/types/assistant";
 import type { MapLocation } from "@/types/map";
 
@@ -16,6 +18,7 @@ interface ResultRow {
   name: string;
   category: string;
   floor: string;
+  categorySlug: string;
 }
 
 export function LocationSearch({ locations, onPick }: LocationSearchProps) {
@@ -41,34 +44,46 @@ export function LocationSearch({ locations, onPick }: LocationSearchProps) {
 
   return (
     <div className="relative">
-      <label className="flex flex-col gap-1 text-xs font-medium text-stone-600">
-        Search
+      <label className="relative block">
+        <span className="sr-only">Search</span>
+        <Icon
+          name="search"
+          size={16}
+          className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-mist-500"
+        />
         <input
           data-testid="location-search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Nike, bathroom, ATM…"
-          className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900"
+          placeholder="Search stores, restrooms, ATMs…"
+          className="field ps-10"
         />
       </label>
       {results.length > 0 ? (
         <ul
           data-testid="search-results"
-          className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-stone-200 bg-white shadow-md"
+          className="scroll-thin absolute z-20 mt-2 max-h-64 w-full overflow-auto rounded-2xl border border-white/[0.08] bg-ink-800/95 p-1 shadow-glass backdrop-blur-xl"
         >
           {results.map((loc) => (
             <li key={loc.id}>
               <button
                 type="button"
-                className="flex w-full flex-col items-start px-3 py-2 text-start hover:bg-stone-50"
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start transition hover:bg-white/[0.05]"
                 onClick={() => {
                   onPick(loc.id);
                   setQuery("");
                 }}
               >
-                <span className="text-sm font-medium text-stone-900">{loc.name}</span>
-                <span className="text-xs text-stone-500">
-                  {loc.category} · {loc.floor}
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ background: categoryFill(loc.categorySlug) }}
+                  aria-hidden
+                />
+                <span className="flex min-w-0 flex-col">
+                  <span className="truncate text-sm font-medium text-mist-50">{loc.name}</span>
+                  <span className="text-xs text-mist-500">
+                    {loc.category} · {loc.floor}
+                  </span>
                 </span>
               </button>
             </li>
@@ -85,6 +100,7 @@ function mergeResults(local: MapLocation[], remote: SearchHit[]): ResultRow[] {
     name: loc.name,
     category: loc.category_name,
     floor: loc.floor_name,
+    categorySlug: loc.category_slug,
   }));
   const seen = new Set(rows.map((row) => row.id));
   for (const hit of remote) {
@@ -95,6 +111,7 @@ function mergeResults(local: MapLocation[], remote: SearchHit[]): ResultRow[] {
       name: hit.name,
       category: hit.category,
       floor: hit.floor,
+      categorySlug: hit.category_slug,
     });
   }
   return rows;

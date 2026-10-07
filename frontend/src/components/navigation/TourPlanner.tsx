@@ -2,7 +2,8 @@
 
 import { type KeyboardEvent, useMemo, useState } from "react";
 import { optimizeTour } from "@/lib/api";
-import { formatDuration } from "@/lib/map-geometry";
+import { Icon } from "@/components/ui/Icon";
+import { categoryFill, formatDuration } from "@/lib/map-geometry";
 import type { MapLocation, RouteProfile } from "@/types/map";
 import type { OptimizeResponse } from "@/types/tour";
 
@@ -97,9 +98,9 @@ export function TourPlanner({ locations, profile, onProfile, onApply }: TourPlan
   }
 
   return (
-    <section className="space-y-3" data-testid="tour-planner">
-      <label className="flex flex-col gap-1 text-xs font-medium text-stone-600">
-        Start
+    <section className="space-y-4" data-testid="tour-planner">
+      <label className="flex flex-col gap-1.5">
+        <span className="eyebrow">Start</span>
         <select
           data-testid="tour-start"
           value={startId}
@@ -107,7 +108,7 @@ export function TourPlanner({ locations, profile, onProfile, onApply }: TourPlan
             setStartId(event.target.value);
             setStopIds((ids) => ids.filter((id) => id !== event.target.value));
           }}
-          className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900"
+          className="field cursor-pointer"
         >
           {locations.map((loc) => (
             <option key={loc.id} value={loc.id}>
@@ -117,44 +118,63 @@ export function TourPlanner({ locations, profile, onProfile, onApply }: TourPlan
         </select>
       </label>
 
-      <div className="flex flex-col gap-1 text-xs font-medium text-stone-600">
-        Stops
-        <input
-          data-testid="tour-search"
-          value={query}
-          onChange={(event) => {
-            setQuery(event.target.value);
-            setActive(0);
-          }}
-          onKeyDown={onStopKey}
-          role="combobox"
-          aria-expanded={visible.length > 0}
-          aria-controls="tour-choices"
-          aria-activedescendant={visible.length > 0 ? `tour-choice-${active}` : undefined}
-          placeholder="Add Nike, an ATM, a pharmacy…"
-          className="rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-900"
-        />
+      <div className="relative flex flex-col gap-1.5">
+        <span className="eyebrow">Stops</span>
+        <div className="relative">
+          <Icon
+            name="search"
+            size={15}
+            className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-mist-500"
+          />
+          <input
+            data-testid="tour-search"
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setActive(0);
+            }}
+            onKeyDown={onStopKey}
+            role="combobox"
+            aria-expanded={visible.length > 0}
+            aria-controls="tour-choices"
+            aria-activedescendant={visible.length > 0 ? `tour-choice-${active}` : undefined}
+            placeholder="Add Nike, an ATM, a pharmacy…"
+            className="field ps-10"
+          />
+        </div>
         {visible.length > 0 ? (
           <ul
             id="tour-choices"
             role="listbox"
-            className="max-h-32 overflow-auto rounded-lg border border-stone-200 bg-white"
+            className="scroll-thin max-h-44 overflow-auto rounded-2xl border border-white/[0.08] bg-ink-800/95 p-1"
           >
             {visible.map((loc, index) => (
               <li key={loc.id} id={`tour-choice-${index}`} role="option" aria-selected={index === active}>
                 <button
                   type="button"
                   tabIndex={-1}
-                  className={`flex w-full flex-col items-start px-3 py-1.5 text-start hover:bg-stone-50 ${
-                    index === active ? "bg-stone-100" : ""
+                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start transition ${
+                    index === active ? "bg-white/[0.07]" : ""
                   }`}
                   onMouseEnter={() => setActive(index)}
                   onClick={() => addStop(loc.id)}
                 >
-                  <span className="text-sm text-stone-900">{loc.name}</span>
-                  <span className="text-[11px] text-stone-500">
-                    {loc.category_name} · {loc.floor_name}
+                  <span
+                    className="h-2 w-2 shrink-0 rounded-full"
+                    style={{ background: categoryFill(loc.category_slug) }}
+                    aria-hidden
+                  />
+                  <span className="flex min-w-0 flex-col">
+                    <span className="truncate text-sm text-mist-50">{loc.name}</span>
+                    <span className="text-[11px] text-mist-500">
+                      {loc.category_name} · {loc.floor_name}
+                    </span>
                   </span>
+                  {index === active ? (
+                    <kbd className="ms-auto rounded border border-white/10 px-1.5 text-[10px] text-mist-400">
+                      ↵
+                    </kbd>
+                  ) : null}
                 </button>
               </li>
             ))}
@@ -163,43 +183,68 @@ export function TourPlanner({ locations, profile, onProfile, onApply }: TourPlan
       </div>
 
       {stopIds.length > 0 ? (
-        <ol data-testid="tour-stops" className="space-y-1">
+        <ol data-testid="tour-stops" className="space-y-1.5">
           {stopIds.map((id, index) => {
             const loc = byId.get(id);
+            const name = loc?.name ?? "stop";
             return (
-              <li key={id} className="flex items-center gap-2 text-sm">
-                <span className="w-4 text-xs text-stone-400">{index + 1}</span>
-                <span className="min-w-0 flex-1 truncate">{loc?.name ?? id}</span>
-                <button type="button" className="text-xs text-stone-500" onClick={() => move(index, -1)}>
-                  Up
-                </button>
-                <button type="button" className="text-xs text-stone-500" onClick={() => move(index, 1)}>
-                  Down
+              <li
+                key={id}
+                className="rise flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] py-1.5 pe-1.5 ps-2.5 text-sm"
+              >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-700 text-[11px] font-semibold text-mist-200">
+                  {index + 1}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-mist-50">{loc?.name ?? id}</span>
+                <button
+                  type="button"
+                  aria-label={`Move ${name} up`}
+                  className="icon-btn"
+                  disabled={index === 0}
+                  onClick={() => move(index, -1)}
+                >
+                  <Icon name="up" size={14} />
                 </button>
                 <button
                   type="button"
-                  className="text-xs text-stone-500"
+                  aria-label={`Move ${name} down`}
+                  className="icon-btn"
+                  disabled={index === stopIds.length - 1}
+                  onClick={() => move(index, 1)}
+                >
+                  <Icon name="down" size={14} />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`Remove ${name}`}
+                  className="icon-btn hover:text-rose-400"
                   onClick={() => setStopIds((ids) => ids.filter((item) => item !== id))}
                 >
-                  Remove
+                  <Icon name="close" size={14} />
                 </button>
               </li>
             );
           })}
         </ol>
       ) : (
-        <p className="text-xs text-stone-500">Add the stores you want to visit. Order is the baseline.</p>
+        <p className="rounded-xl border border-dashed border-white/[0.1] px-4 py-5 text-center text-xs leading-relaxed text-mist-500">
+          Add the stores you want to visit, in any order.
+          <br />
+          MallMind finds the shortest walk between them.
+        </p>
       )}
 
-      <fieldset className="flex flex-wrap gap-2">
+      <fieldset className="flex flex-wrap gap-1.5">
+        <legend className="sr-only">Route profile</legend>
         {PROFILES.map((item) => (
-          <label key={item.id} className="flex items-center gap-1 text-xs text-stone-700">
+          <label key={item.id} className={`chip ${profile === item.id ? "chip-active" : ""}`}>
             <input
               type="radio"
               name="tour-profile"
               value={item.id}
               checked={profile === item.id}
               onChange={() => onProfile(item.id)}
+              className="sr-only"
             />
             {item.label}
           </label>
@@ -211,13 +256,17 @@ export function TourPlanner({ locations, profile, onProfile, onApply }: TourPlan
         data-testid="tour-optimize"
         disabled={pending || startId === "" || stopIds.length === 0}
         onClick={() => void optimize()}
-        className="w-full rounded-lg bg-stone-900 px-3 py-2 text-sm font-semibold text-white disabled:opacity-40"
+        className="btn-primary"
       >
+        <Icon name="sparkle" size={15} />
         {pending ? "Optimizing…" : "Optimize route"}
       </button>
 
       {error !== null ? (
-        <p data-testid="tour-error" className="text-sm text-red-800">
+        <p
+          data-testid="tour-error"
+          className="rounded-xl border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-sm text-rose-400"
+        >
           {error}
         </p>
       ) : null}
@@ -246,24 +295,29 @@ function TourResult({
   onStart: () => void;
 }) {
   return (
-    <div className="space-y-2" data-testid="tour-result">
-      <p className="text-sm font-semibold text-stone-900">
-        {plan.optimized_order.length - 1} stops
-      </p>
-      <div className="grid grid-cols-2 gap-2 text-sm">
-        <div className="rounded-lg bg-stone-50 px-3 py-2">
-          <p className="text-[11px] uppercase tracking-wide text-stone-500">Original</p>
-          <p>{formatMeters(plan.original_distance_m)}</p>
-          <p className="text-stone-500">{formatDuration(plan.original_seconds)}</p>
+    <div className="rise space-y-4" data-testid="tour-result">
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3">
+          <p className="eyebrow">Your order</p>
+          <p className="mt-1.5 font-display text-2xl text-mist-400 line-through decoration-white/20">
+            {formatMeters(plan.original_distance_m)}
+          </p>
+          <p className="text-xs text-mist-500">{formatDuration(plan.original_seconds)}</p>
         </div>
-        <div className="rounded-lg bg-orange-50 px-3 py-2">
-          <p className="text-[11px] uppercase tracking-wide text-orange-800">Optimized</p>
-          <p>{formatMeters(plan.optimized_distance_m)}</p>
-          <p className="text-stone-500">{formatDuration(plan.optimized_seconds)}</p>
+        <div className="rounded-2xl border border-gold-400/30 bg-gold-400/[0.08] p-3">
+          <p className="eyebrow !text-gold-300">Optimized</p>
+          <p className="mt-1.5 font-display text-2xl text-mist-50">
+            {formatMeters(plan.optimized_distance_m)}
+          </p>
+          <p className="text-xs text-mist-400">{formatDuration(plan.optimized_seconds)}</p>
         </div>
       </div>
       {plan.improved ? (
-        <p data-testid="tour-savings" className="text-sm font-medium text-stone-900">
+        <p
+          data-testid="tour-savings"
+          className="flex items-center gap-2 rounded-xl bg-jade-400/10 px-3 py-2 text-sm font-medium text-jade-400"
+        >
+          <Icon name="sparkle" size={14} />
           You save {formatMeters(plan.distance_saved_m)}
           {plan.distance_saved_percent !== null ? ` · ${plan.distance_saved_percent}%` : ""}
           {plan.estimated_time_saved_seconds > 0
@@ -271,31 +325,47 @@ function TourResult({
             : ""}
         </p>
       ) : (
-        <p data-testid="tour-savings" className="text-sm text-stone-600">
+        <p data-testid="tour-savings" className="text-sm text-mist-400">
           {plan.message ?? "No shorter route was found."}
         </p>
       )}
-      <ol className="space-y-1 text-sm" data-testid="tour-order">
-        {plan.optimized_order.map((stop) => (
-          <li key={stop.location_id}>
-            {stop.position}. {stop.name}
-            <span className="text-stone-500"> · {stop.floor}</span>
+      <ol data-testid="tour-order">
+        {plan.optimized_order.map((stop, i) => (
+          <li key={stop.location_id} className="relative flex items-center gap-3 pb-2.5">
+            {i < plan.optimized_order.length - 1 ? (
+              <span className="absolute start-[11px] top-6 h-[calc(100%-1rem)] w-px bg-gold-400/25" aria-hidden />
+            ) : null}
+            <span
+              className={`relative z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-ink-950 ${
+                i === 0 ? "bg-jade-400" : "bg-gold-300"
+              }`}
+              aria-hidden
+            >
+              {stop.position}
+            </span>
+            <span className="text-sm text-mist-50">
+              <span className="sr-only">{stop.position}. </span>
+              {stop.name}
+              <span className="text-mist-500"> · {stop.floor}</span>
+            </span>
           </li>
         ))}
       </ol>
-      <button
-        type="button"
-        data-testid="tour-start-route"
-        onClick={onStart}
-        className="w-full rounded-lg border border-stone-900 px-3 py-2 text-sm font-semibold text-stone-900"
-      >
-        Start route
-      </button>
-      <button type="button" className="text-xs text-stone-600 underline" onClick={onToggle}>
-        {details ? "Hide details" : "Details"}
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          data-testid="tour-start-route"
+          onClick={onStart}
+          className="btn-primary flex-1"
+        >
+          Start route
+        </button>
+        <button type="button" className="btn-ghost" onClick={onToggle}>
+          {details ? "Hide details" : "Details"}
+        </button>
+      </div>
       {details ? (
-        <div data-testid="tour-details" className="space-y-1 text-xs text-stone-600">
+        <div data-testid="tour-details" className="card space-y-1 font-mono text-[11px] text-mist-400">
           <p>Algorithm: {algorithmLabel(plan.algorithm)}</p>
           <p>A* pair calculations: {plan.astar_calls}</p>
           <p>2-opt improvements: {plan.two_opt_moves}</p>
@@ -321,7 +391,7 @@ function TourResult({
 function CostMatrix({ labels, matrix }: { labels: string[]; matrix: Array<Array<number | null>> }) {
   return (
     <div className="overflow-x-auto" data-testid="tour-matrix">
-      <table className="border-collapse text-[10px]">
+      <table className="mt-2 border-collapse text-[10px] text-mist-200">
         <thead>
           <tr>
             <th className="p-1" />

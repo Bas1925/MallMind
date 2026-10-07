@@ -156,28 +156,33 @@ export function continueMessages(
   return messages;
 }
 
+// Luminous tones that read on the dark map canvas.
 export function categoryFill(slug: string): string {
   switch (slug) {
     case "fashion":
-      return "#1d4e89";
+      return "#7aa2ff";
     case "electronics":
-      return "#0f766e";
+      return "#4fd1c5";
     case "food":
-      return "#b45309";
+      return "#ffa45c";
     case "restroom":
-      return "#0369a1";
+      return "#5ec8ff";
     case "atm":
-      return "#166534";
+      return "#3ddc97";
     case "elevator":
-      return "#6d28d9";
+      return "#b49cff";
     case "escalator":
-      return "#7c3aed";
+      return "#d0a8ff";
     case "entrance":
-      return "#111827";
+      return "#f6f4ef";
     case "stairs":
-      return "#78716c";
+      return "#a8a29e";
+    case "services":
+      return "#f9a8d4";
+    case "entertainment":
+      return "#ff6b81";
     default:
-      return "#4b5563";
+      return "#9aa0ab";
   }
 }
 

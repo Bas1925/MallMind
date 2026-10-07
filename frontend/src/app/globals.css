@@ -3,17 +3,123 @@
 @tailwind utilities;
 
 :root {
-  --background: #f5f2ec;
-  --foreground: #1c1917;
+  color-scheme: dark;
+  --background: #07090d;
+  --foreground: #f6f4ef;
 }
 
 html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-feature-settings: "cv11", "ss01";
 }
 
 body {
   min-height: 100dvh;
+}
+
+@layer components {
+  /* Frosted panel floating over the map. */
+  .glass {
+    @apply border border-white/[0.07] bg-ink-850/75 shadow-glass backdrop-blur-xl;
+  }
+
+  .eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.18em] text-mist-500;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-white/[0.08] bg-ink-900/80 px-3.5 py-2.5 text-sm text-mist-50
+      outline-none transition placeholder:text-mist-500 hover:border-white/[0.14]
+      focus:border-gold-400/60 focus:ring-2 focus:ring-gold-400/20;
+  }
+
+  .chip {
+    @apply inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/[0.08] px-3 py-1.5
+      text-xs font-medium text-mist-200 transition hover:border-white/20 hover:text-mist-50;
+  }
+
+  .chip-active {
+    @apply border-gold-400/50 bg-gold-400/[0.12] text-gold-200;
+  }
+
+  .btn-primary {
+    @apply inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-gold-300 to-gold-500
+      px-4 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition
+      hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-35 disabled:shadow-none;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/[0.1] px-3.5 py-2
+      text-xs font-semibold text-mist-50 transition hover:border-white/25 hover:bg-white/[0.04];
+  }
+
+  .card {
+    @apply rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4;
+  }
+
+  .icon-btn {
+    @apply inline-flex h-7 w-7 items-center justify-center rounded-lg text-mist-400 transition
+      hover:bg-white/[0.06] hover:text-mist-50 disabled:opacity-30;
+  }
+}
+
+/* Route line: slow travelling dashes over a soft glow. */
+@keyframes route-flow {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+.route-flow {
+  stroke-dasharray: 2 4;
+  animation: route-flow 1.1s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.pulse-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-flow,
+  .pulse-ring,
+  .rise {
+    animation: none;
+  }
+}
+
+/* Thin scrollbars inside the dark panel. */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }

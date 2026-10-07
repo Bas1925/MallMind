@@ -8,6 +8,8 @@ interface RouteLayerProps {
   hops: VerticalHop[];
 }
 
+const GOLD = "#f2cf8a";
+
 export function RouteLayer({ bounds, segments, hops }: RouteLayerProps) {
   return (
     <g aria-label="Active route">
@@ -19,30 +21,25 @@ export function RouteLayer({ bounds, segments, hops }: RouteLayerProps) {
           })
           .join(" ");
         return (
-          <path
-            key={`seg-${i}`}
-            data-testid="route-path"
-            d={d}
-            fill="none"
-            stroke="#c2410c"
-            strokeWidth={2.4}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <g key={`seg-${i}`} strokeLinecap="round" strokeLinejoin="round" fill="none">
+            <path d={d} stroke={GOLD} strokeWidth={4.5} opacity={0.35} filter="url(#soft-glow)" />
+            <path data-testid="route-path" d={d} stroke={GOLD} strokeWidth={1.9} />
+            <path d={d} stroke="#fff8e8" strokeWidth={0.7} opacity={0.85} className="route-flow" />
+          </g>
         );
       })}
       {hops.map((hop, i) => {
         const p = toSvg(hop.x, hop.y, bounds);
         return (
           <g key={`hop-${i}`} transform={`translate(${p.x} ${p.y})`}>
-            <circle r={3.2} fill="#fff" stroke="#c2410c" strokeWidth={1.2} />
+            <circle r={3.1} fill="#0b0e14" stroke={GOLD} strokeWidth={0.8} />
             <text
-              y={-4.5}
+              y={0.95}
               textAnchor="middle"
-              className="fill-orange-700"
-              style={{ fontSize: 3.2, fontWeight: 600 }}
+              fill={GOLD}
+              style={{ fontSize: 2.6, fontWeight: 700 }}
             >
-              {hop.kind === "elevator" ? "E" : hop.kind === "stairs" ? "S" : "Esc"}
+              {hop.kind === "elevator" ? "E" : hop.kind === "stairs" ? "S" : "Es"}
             </text>
           </g>
         );

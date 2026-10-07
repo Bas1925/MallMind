@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon } from "@/components/ui/Icon";
+import { categoryFill } from "@/lib/map-geometry";
 import type { MapLocation } from "@/types/map";
 
 interface LocationCardProps {
@@ -9,28 +11,32 @@ interface LocationCardProps {
 }
 
 export function LocationCard({ location, onNavigate, onSetStart }: LocationCardProps) {
+  const tint = categoryFill(location.category_slug);
   return (
-    <section data-testid="location-card" className="rounded-xl border border-stone-200 bg-white p-4">
-      <h2 className="text-base font-semibold text-stone-900">{location.name}</h2>
-      <p className="mt-1 text-sm text-stone-500">
-        {location.category_name} · {location.floor_name}
-      </p>
-      {location.description ? (
-        <p className="mt-2 text-sm text-stone-600">{location.description}</p>
-      ) : null}
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          type="button"
-          className="rounded-lg bg-stone-900 px-3 py-1.5 text-xs font-semibold text-white"
-          onClick={onNavigate}
+    <section data-testid="location-card" className="card rise">
+      <div className="flex items-start gap-3">
+        <span
+          className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+          style={{ background: `${tint}1f`, color: tint }}
+          aria-hidden
         >
+          <Icon name="pin" size={18} />
+        </span>
+        <div className="min-w-0">
+          <h2 className="font-display text-2xl leading-tight text-mist-50">{location.name}</h2>
+          <p className="mt-0.5 text-xs text-mist-400">
+            {location.category_name} · {location.floor_name}
+          </p>
+        </div>
+      </div>
+      {location.description ? (
+        <p className="mt-3 text-sm leading-relaxed text-mist-200">{location.description}</p>
+      ) : null}
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <button type="button" className="btn-primary py-2 text-xs" onClick={onNavigate}>
           Navigate here
         </button>
-        <button
-          type="button"
-          className="rounded-lg border border-stone-200 px-3 py-1.5 text-xs font-semibold text-stone-700"
-          onClick={onSetStart}
-        >
+        <button type="button" className="btn-ghost" onClick={onSetStart}>
           Set as start
         </button>
       </div>
