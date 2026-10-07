@@ -21,15 +21,23 @@ def instructions_for(
     by_id = {e.id: e for edges in graph.outgoing.values() for e in edges}
     steps: list[str] = []
     hallway_run = 0.0
+    # A shaft ride Ground -> L1 -> L2 is two edges but one thing to do:
+    # stay in the elevator. Consecutive vertical edges of one type merge.
+    ride: GraphEdge | None = None
     for eid in result.edge_ids:
         edge = by_id[eid]
+        if ride is not None and edge.edge_type is not ride.edge_type:
+            steps.append(_vertical_line(graph, ride))
+            ride = None
         if edge.edge_type is EdgeType.HALLWAY:
             hallway_run += edge.distance_m
             continue
         if hallway_run > 0:
             steps.append(f"Walk {hallway_run:.0f} m")
             hallway_run = 0.0
-        steps.append(_vertical_line(graph, edge))
+        ride = edge
+    if ride is not None:
+        steps.append(_vertical_line(graph, ride))
     if hallway_run > 0:
         steps.append(f"Walk {hallway_run:.0f} m")
     dest = destination_name
@@ -49,16 +57,20 @@ def floors_on_route(graph: MallGraph, node_ids: tuple) -> list[int]:
     return seen
 
 
+def floor_label(graph: MallGraph, level: int) -> str:
+    return graph.floor_names.get(level, f"floor {level}")
+
+
 def _vertical_line(graph: MallGraph, edge: GraphEdge) -> str:
+    """Describe a ride by where it ends. `edge` is the last edge of the ride."""
     src = graph.nodes[edge.from_id]
-    dst = graph.nodes[edge.to_id]
-    dest_floor = dst.floor_level
+    dest = floor_label(graph, graph.nodes[edge.to_id].floor_level)
     if edge.edge_type is EdgeType.ELEVATOR:
-        return f"Take the elevator to floor {dest_floor}"
+        return f"Take the elevator to {dest}"
     if edge.edge_type is EdgeType.STAIRS:
-        return f"Take the stairs to floor {dest_floor}"
+        return f"Take the stairs to {dest}"
     if edge.edge_type is EdgeType.ESCALATOR_UP:
-        return f"Use the escalator up to floor {dest_floor}"
+        return f"Use the escalator up to {dest}"
     if edge.edge_type is EdgeType.ESCALATOR_DOWN:
-        return f"Use the escalator down to floor {dest_floor}"
-    return f"Continue to floor {dest_floor} from {src.floor_level}"
+        return f"Use the escalator down to {dest}"
+    return f"Continue to {dest} from {floor_label(graph, src.floor_level)}"

@@ -61,7 +61,12 @@ class GraphRepository:
             )
             outgoing[e.from_node_id].append(ge)
         by_location_id = {n.location_id: n.id for n in nodes.values() if n.location_id is not None}
-        return MallGraph(nodes=nodes, outgoing=outgoing, by_location_id=by_location_id)
+        return MallGraph(
+            nodes=nodes,
+            outgoing=outgoing,
+            by_location_id=by_location_id,
+            floor_names={f.level: f.name for f in floors},
+        )
 
     async def get_location(self, location_id: object) -> Location | None:
         return await self._session.scalar(

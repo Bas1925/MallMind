@@ -64,4 +64,10 @@ def graph_from_seed(doc: SeedDocument) -> MallGraph:
             edge_type=e.edge_type if isinstance(e.edge_type, EdgeType) else EdgeType(e.edge_type),
         )
         outgoing[edge.from_id].append(edge)
-    return MallGraph(nodes=nodes, outgoing=outgoing, by_key=by_key, by_location_id=by_location_id)
+    return MallGraph(
+        nodes=nodes,
+        outgoing=outgoing,
+        by_key=by_key,
+        by_location_id=by_location_id,
+        floor_names={f.level: f.name for f in doc.floors},
+    )

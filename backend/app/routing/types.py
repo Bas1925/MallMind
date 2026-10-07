@@ -75,6 +75,7 @@ class MallGraph:
     outgoing: dict[uuid.UUID, list[GraphEdge]] = field(default_factory=dict)
     by_key: dict[str, uuid.UUID] = field(default_factory=dict)
     by_location_id: dict[uuid.UUID, uuid.UUID] = field(default_factory=dict)
+    floor_names: dict[int, str] = field(default_factory=dict)  # level -> "Level 1"
 
     def neighbors(self, node_id: uuid.UUID) -> list[GraphEdge]:
         return self.outgoing.get(node_id, [])
