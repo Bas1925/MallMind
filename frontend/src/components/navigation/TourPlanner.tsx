@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { type KeyboardEvent, useMemo, useState } from "react";
 import { optimizeTour } from "@/lib/api";
 import { formatDuration } from "@/lib/map-geometry";
 import type { MapLocation, RouteProfile } from "@/types/map";
@@ -24,6 +24,7 @@ export function TourPlanner({ locations, profile, onProfile, onApply }: TourPlan
   const [startId, setStartId] = useState(entrance?.id ?? locations[0]?.id ?? "");
   const [stopIds, setStopIds] = useState<string[]>([]);
   const [query, setQuery] = useState("");
+  const [active, setActive] = useState(0);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [plan, setPlan] = useState<OptimizeResponse | null>(null);
@@ -36,6 +37,32 @@ export function TourPlanner({ locations, profile, onProfile, onApply }: TourPlan
     if (q === "") return true;
     return loc.name.toLowerCase().includes(q) || loc.category_name.toLowerCase().includes(q);
   });
+
+  const visible = query.trim() === "" ? [] : choices.slice(0, 6);
+
+  function addStop(id: string): void {
+    setStopIds((ids) => [...ids, id]);
+    setQuery("");
+    setActive(0);
+  }
+
+  function onStopKey(event: KeyboardEvent<HTMLInputElement>): void {
+    if (visible.length === 0) return;
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActive((index) => (index + 1) % visible.length);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActive((index) => (index - 1 + visible.length) % visible.length);
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      const pick = visible[Math.min(active, visible.length - 1)];
+      if (pick !== undefined) addStop(pick.id);
+    } else if (event.key === "Escape") {
+      setQuery("");
+      setActive(0);
+    }
+  }
 
   async function optimize(): Promise<void> {
     if (startId === "" || stopIds.length === 0) return;
@@ -95,21 +122,34 @@ export function TourPlanner({ locations, profile, onProfile, onApply }: TourPlan
         <input
           data-testid="tour-search"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setActive(0);
+          }}
+          onKeyDown={onStopKey}
+          role="combobox"
+          aria-expanded={visible.length > 0}
+          aria-controls="tour-choices"
+          aria-activedescendant={visible.length > 0 ? `tour-choice-${active}` : undefined}
           placeholder="Add Nike, an ATM, a pharmacy…"
           className="rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-900"
         />
-        {query.trim() !== "" && choices.length > 0 ? (
-          <ul className="max-h-32 overflow-auto rounded-lg border border-stone-200 bg-white">
-            {choices.slice(0, 6).map((loc) => (
-              <li key={loc.id}>
+        {visible.length > 0 ? (
+          <ul
+            id="tour-choices"
+            role="listbox"
+            className="max-h-32 overflow-auto rounded-lg border border-stone-200 bg-white"
+          >
+            {visible.map((loc, index) => (
+              <li key={loc.id} id={`tour-choice-${index}`} role="option" aria-selected={index === active}>
                 <button
                   type="button"
-                  className="flex w-full flex-col items-start px-3 py-1.5 text-start hover:bg-stone-50"
-                  onClick={() => {
-                    setStopIds((ids) => [...ids, loc.id]);
-                    setQuery("");
-                  }}
+                  tabIndex={-1}
+                  className={`flex w-full flex-col items-start px-3 py-1.5 text-start hover:bg-stone-50 ${
+                    index === active ? "bg-stone-100" : ""
+                  }`}
+                  onMouseEnter={() => setActive(index)}
+                  onClick={() => addStop(loc.id)}
                 >
                   <span className="text-sm text-stone-900">{loc.name}</span>
                   <span className="text-[11px] text-stone-500">
