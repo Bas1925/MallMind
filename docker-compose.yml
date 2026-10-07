@@ -1,0 +1,88 @@
+# =============================================================================
+# MallMind — local development stack
+# =============================================================================
+# Brings up 3 services on a shared network:
+#   postgres  : PostgreSQL 16 with pgvector + pg_trgm extensions
+#   backend   : FastAPI with hot reload (volume-mounted app/)
+#   frontend  : Next.js dev server with hot reload (volume-mounted src/)
+#
+# Service-to-service networking uses the service names as DNS hosts
+# (e.g. backend reaches postgres at `postgres:5432`).
+#
+# Browser → host → published port → container
+# Container → container : service name as host (internal docker network)
+# =============================================================================
+
+services:
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: mallmind-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mallmind}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mallmind_dev_only}
+      POSTGRES_DB: ${POSTGRES_DB:-mallmind}
+    ports:
+      # Exposed so you can connect from the host (psql, DBeaver, etc.).
+      # Not required for inter-container traffic.
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Scripts in /docker-entrypoint-initdb.d run on first database init.
+      - ./backend/scripts/init-extensions.sql:/docker-entrypoint-initdb.d/01-extensions.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mallmind} -d ${POSTGRES_DB:-mallmind}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+    container_name: mallmind-backend
+    restart: unless-stopped
+    environment:
+      # Note: host is `postgres` (service name), not localhost — this is the
+      # single most common Docker Compose gotcha.
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mallmind}:${POSTGRES_PASSWORD:-mallmind_dev_only}@postgres:5432/${POSTGRES_DB:-mallmind}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source so uvicorn --reload picks up edits without rebuilds.
+      - ./backend/app:/app/app:ro
+      - ./backend/alembic:/app/alembic:ro
+      - ./backend/alembic.ini:/app/alembic.ini:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: mallmind-frontend
+    restart: unless-stopped
+    environment:
+      # Browser-visible API URL. Browser runs on the host, so `localhost:8000`
+      # points at the published backend port.
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source for hot reload. node_modules stays in the image (via
+      # anonymous volume) to avoid host/container ABI mismatches.
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+    name: mallmind-postgres-data

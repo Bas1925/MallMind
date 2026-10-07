@@ -1,0 +1,86 @@
+name: backend-ci
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mallmind/backend/**"
+      - "mallmind/.github/workflows/backend-ci.yml"
+  pull_request:
+    paths:
+      - "mallmind/backend/**"
+      - "mallmind/.github/workflows/backend-ci.yml"
+
+defaults:
+  run:
+    working-directory: mallmind/backend
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          # Cache on the lockfile — anything else makes caching unreliable.
+          cache-dependency-path: mallmind/backend/requirements-dev-lock.txt
+      # Deterministic install from the lockfile. `pip install .` makes our
+      # package importable so ruff can analyse it as an installed project.
+      - run: pip install --upgrade pip
+      - run: pip install -r requirements-dev-lock.txt
+      - run: pip install --no-deps .
+      - name: Ruff check
+        run: ruff check .
+      - name: Ruff format (check only)
+        run: ruff format --check .
+
+  test:
+    name: Tests (pytest)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: mallmind
+          POSTGRES_PASSWORD: mallmind_ci
+          POSTGRES_DB: mallmind
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mallmind -d mallmind"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # The "postgres" service is reachable at localhost from the
+      # GitHub-hosted runner (unlike within docker-compose where the
+      # service name is used).
+      DATABASE_URL: postgresql+asyncpg://mallmind:mallmind_ci@localhost:5432/mallmind
+      ENVIRONMENT: ci
+      LOG_LEVEL: WARNING
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: mallmind/backend/requirements-dev-lock.txt
+      - run: pip install --upgrade pip
+      - run: pip install -r requirements-dev-lock.txt
+      - run: pip install --no-deps .
+
+      - name: Install pgvector + pg_trgm extensions
+        env:
+          PGPASSWORD: mallmind_ci
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          psql -h localhost -U mallmind -d mallmind -c "CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+
+      - name: Run tests with coverage
+        run: coverage run -m pytest && coverage report

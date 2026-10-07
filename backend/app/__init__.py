@@ -1,0 +1,1 @@
+"""MallMind backend application package."""
