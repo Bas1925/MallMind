@@ -61,3 +61,6 @@ What general lesson, if any, transfers to future work?
 - [`2026-10-06-cors-origins-json-env.md`](2026-10-06-cors-origins-json-env.md)
 - [`2026-10-06-trigram-short-name.md`](2026-10-06-trigram-short-name.md)
 - [`2026-10-06-hebrew-definite-article.md`](2026-10-06-hebrew-definite-article.md)
+- [`2026-10-07-coffee-ranked-mcdonalds-first.md`](2026-10-07-coffee-ranked-mcdonalds-first.md)
+- [`2026-10-07-elevator-ride-split-into-steps.md`](2026-10-07-elevator-ride-split-into-steps.md)
+- [`2026-10-07-assistant-language-leaks.md`](2026-10-07-assistant-language-leaks.md)

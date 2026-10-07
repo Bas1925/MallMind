@@ -6,7 +6,7 @@ import uuid
 
 import pytest
 
-from app.assistant.compose import answer_is_grounded
+from app.assistant.compose import RouteCopy, answer_is_grounded, location_answer, route_answer
 from app.assistant.llm import LlmError
 from app.assistant.orchestrator import Assistant, RouteFacts
 from app.routing.types import RouteProfile
@@ -238,3 +238,29 @@ def test_dead_llm_endpoint_is_an_error() -> None:
 def test_grounding_blocks_other_mall_stores() -> None:
     assert answer_is_grounded("Nike is on Ground Floor.", {"Nike"}, {"Nike", "Zara"})
     assert not answer_is_grounded("Try Zara instead.", {"Nike"}, {"Nike", "Zara"})
+
+
+def _route_copy(seconds: float, instruction: str = "Walk 80 m") -> RouteCopy:
+    return RouteCopy("Main Entrance", "Nike", 80.0, seconds, instruction, "normal")
+
+
+def test_route_answer_keeps_english_steps_out_of_hebrew_and_arabic() -> None:
+    # The map panel shows the steps. The sentence must not switch language.
+    for language in ("he", "ar"):
+        assert "Walk" not in route_answer(language, _route_copy(60.0))
+    assert "Walk 80 m" in route_answer("en", _route_copy(60.0))
+
+
+def test_route_answer_minute_grammar() -> None:
+    assert "دقيقة واحدة" in route_answer("ar", _route_copy(60.0))
+    assert "دقيقتان" in route_answer("ar", _route_copy(120.0))
+    assert "5 دقائق" in route_answer("ar", _route_copy(300.0))
+    assert "15 دقيقة" in route_answer("ar", _route_copy(900.0))
+    assert "דקה אחת" in route_answer("he", _route_copy(60.0))
+    assert "5 דקות" in route_answer("he", _route_copy(300.0))
+
+
+def test_hebrew_prefix_is_hyphenated_before_a_latin_floor_name() -> None:
+    assert "ב-Ground Floor" in location_answer("he", NIKE)
+    hebrew_floor = _hit("Nike", "nike", "Fashion", floor="קומת קרקע")
+    assert "בקומת קרקע" in location_answer("he", hebrew_floor)

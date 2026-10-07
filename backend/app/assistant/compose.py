@@ -34,11 +34,32 @@ class RouteCopy:
     profile: str
 
 
+def _he_in(name: str) -> str:
+    """Hebrew "in" is a glued prefix. Before a Latin name it takes a hyphen: ב-Ground Floor."""
+    if name and "֐" <= name[0] <= "׿":
+        return f"ב{name}"
+    return f"ב-{name}"
+
+
+def _ar_minutes(minutes: int) -> str:
+    if minutes == 1:
+        return "دقيقة واحدة"
+    if minutes == 2:
+        return "دقيقتان"
+    if minutes <= 10:
+        return f"{minutes} دقائق"
+    return f"{minutes} دقيقة"
+
+
+def _he_minutes(minutes: int) -> str:
+    return "דקה אחת" if minutes == 1 else f"{minutes} דקות"
+
+
 def location_answer(language: str, hit: SearchHitOut) -> str:
     if language == "ar":
         return f"{hit.name} في {hit.floor} ({hit.category})."
     if language == "he":
-        return f"{hit.name} נמצא ב{hit.floor} ({hit.category})."
+        return f"{hit.name} נמצא {_he_in(hit.floor)} ({hit.category})."
     return f"{hit.name} is on {hit.floor} ({hit.category})."
 
 
@@ -67,15 +88,16 @@ def route_answer(language: str, route: RouteCopy) -> str:
             "he": " בלי מדרגות.",
             "en": " Avoiding stairs.",
         }[language if language in {"ar", "he"} else "en"]
+    # Step text is English. In he/ar the map panel shows the steps instead.
     if language == "ar":
         return (
             f"من {route.origin} إلى {route.destination}: {distance} متر، "
-            f"حوالي {minutes} دقائق. {route.instruction}{profile}"
+            f"حوالي {_ar_minutes(minutes)}.{profile}"
         )
     if language == "he":
         return (
             f"מ-{route.origin} אל {route.destination}: {distance} מטר, "
-            f"בערך {minutes} דקות. {route.instruction}{profile}"
+            f"בערך {_he_minutes(minutes)}.{profile}"
         )
     return (
         f"{route.origin} → {route.destination}: {distance} m, about {minutes} min. "
@@ -87,7 +109,7 @@ def here_answer(language: str, hit: SearchHitOut) -> str:
     if language == "ar":
         return f"نقطة البداية هي {hit.name} في {hit.floor}."
     if language == "he":
-        return f"נקודת ההתחלה היא {hit.name} ב{hit.floor}."
+        return f"נקודת ההתחלה היא {hit.name} {_he_in(hit.floor)}."
     return f"You started at {hit.name} on {hit.floor}."
 
 
