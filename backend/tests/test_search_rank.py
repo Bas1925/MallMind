@@ -93,6 +93,36 @@ def test_keyword_running_shoes_hits_nike_not_as_exact() -> None:
     assert scored[0] < 0.70
 
 
+def _food_score(name: str, slug: str) -> tuple[float, str] | None:
+    return lexical_score(
+        "coffee",
+        name=name,
+        slug=slug,
+        category_slug="food",
+        category_names=("Food",),
+        search_text=build_search_text(
+            name=name,
+            slug=slug,
+            description=None,
+            category_slug="food",
+            category_en="Food",
+            category_he="אוכל",
+            category_ar="طعام",
+        ),
+        name_similarity=0.0,
+    )
+
+
+def test_store_keyword_beats_category_wide_keyword() -> None:
+    # "coffee" is a food-category synonym, so McDonald's matches it too.
+    # Starbucks lists it as its own keyword and must rank first.
+    starbucks = _food_score("Starbucks", "starbucks")
+    mcdonalds = _food_score("McDonald's", "mcdonalds")
+    assert starbucks is not None and mcdonalds is not None
+    assert starbucks[1] == mcdonalds[1] == "keyword"
+    assert mcdonalds[0] < starbucks[0] < 0.70
+
+
 def test_hebrew_definite_article_still_matches_the_synonym() -> None:
     scored = lexical_score(
         "הכספומט",

@@ -8,7 +8,8 @@ cannot outrank an earlier one:
     prefix                     0.90
     name trigram               0.75 .. 0.85   (pg_trgm, or 0.80 for one edit)
     category name/slug         0.70
-    keyword / document phrase  0.60
+    store keyword              0.65
+    category keyword / phrase  0.60
 
 Every band above is a lexical decision. `lexical_gate` includes keyword:
 a curated synonym is deterministic, so a vector neighbor must not reorder it.
@@ -32,7 +33,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-from app.search.text import fold, match_forms, tokenize, within_one_edit
+from app.search.text import SLUG_KEYWORDS, fold, match_forms, tokenize, within_one_edit
 
 MatchType = Literal["exact", "prefix", "trigram", "category", "keyword", "semantic", "hybrid"]
 
@@ -89,11 +90,18 @@ def lexical_score(
     if q in category_forms or token_set & category_forms:
         return 0.70, "category"
 
-    haystack = fold(search_text)
     forms = {q}
     for token in tokens:
         forms |= match_forms(token)
-    if any(len(form) >= 3 and form in haystack for form in forms):
+
+    def hits(haystack: str) -> bool:
+        return any(len(form) >= 3 and form in haystack for form in forms)
+
+    # A store's own synonym (Starbucks: "coffee") beats the same word reached
+    # through its category (food: "coffee"), which every restaurant shares.
+    if hits(fold(" ".join(SLUG_KEYWORDS.get(slug, ())))):
+        return 0.65, "keyword"
+    if hits(fold(search_text)):
         return 0.60, "keyword"
     return None
 
