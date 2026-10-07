@@ -7,6 +7,7 @@ import uuid
 import pytest
 
 from app.assistant.compose import RouteCopy, answer_is_grounded, location_answer, route_answer
+from app.assistant.intent import parse_intent
 from app.assistant.llm import LlmError
 from app.assistant.orchestrator import Assistant, RouteFacts
 from app.routing.types import RouteProfile
@@ -264,3 +265,21 @@ def test_hebrew_prefix_is_hyphenated_before_a_latin_floor_name() -> None:
     assert "ב-Ground Floor" in location_answer("he", NIKE)
     hebrew_floor = _hit("Nike", "nike", "Fashion", floor="קומת קרקע")
     assert "בקומת קרקע" in location_answer("he", hebrew_floor)
+
+
+@pytest.mark.parametrize(
+    ("message", "target"),
+    [
+        ("Take me to Nike", "Nike"),
+        ("خذني إلى Nike", "Nike"),
+        ("وديني على Nike", "Nike"),
+        ("دلني على Zara", "Zara"),
+        ("קח אותי ל-Nike", "Nike"),
+        ("תיקח אותי ל Zara", "Zara"),
+        ("איך מגיעים ל-Apple?", "Apple"),
+    ],
+)
+def test_take_me_to_is_a_route_in_three_languages(message: str, target: str) -> None:
+    intent = parse_intent(message, RouteProfile.NORMAL)
+    assert intent.kind == "route"
+    assert intent.destination_query == target

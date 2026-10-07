@@ -11,18 +11,33 @@ from app.search.text import fold
 
 Kind = Literal["search", "route", "nearest", "here"]
 
+# Longest first: _strip_route_words removes these in order, so "how do i
+# get to" must go before "how do i get" leaves a dangling "to".
 _ROUTE = (
+    "how can i get to",
+    "how do i get to",
+    "how can i reach",
     "how do i get",
     "how can i",
-    "take me",
+    "directions to",
     "directions",
+    "take me to",
+    "take me",
     "route to",
     "كيف أصل",
     "كيف اوصل",
     "وصلني",
+    "خذني",
+    "خدني",
+    "وديني",
+    "دلني",
     "איך מגיעים",
+    "איך להגיע",
+    "תיקח אותי",
     "קח אותי",
 )
+# "to" left over after the route phrase: إلى/الى/على, Hebrew ל as "ל-" or "ל ".
+_LEADING_TO = re.compile(r"^(?:to|إلى|الى|على|لـ|ל-|ל)\s*(?=\S)", re.IGNORECASE)
 _NEAREST = ("nearest", "closest", "أقرب", "اقرب", "הכי קרוב")
 _HERE = ("where did i start", "where am i", "وين بدأت", "איפה התחלתי")
 _WHEELCHAIR = ("wheelchair", "كرسي متحرك", "כיסא גלגלים", "נגיש")
@@ -93,7 +108,12 @@ def _from_to(message: str) -> tuple[str | None, str | None]:
 
 
 def _strip_route_words(message: str) -> str:
-    text = message
-    for phrase in ("take me to", "how do i get to", "how can i reach", "how can i get to"):
-        text = re.sub(phrase, " ", text, flags=re.IGNORECASE)
-    return " ".join(text.replace("?", " ").split())
+    text = message.replace("?", " ").replace("؟", " ")
+    for phrase in _ROUTE:
+        text = re.sub(re.escape(phrase), " ", text, flags=re.IGNORECASE)
+    text = " ".join(text.split())
+    # Hebrew ל glued to a Hebrew word (לשירותים) is part of the word; only
+    # strip it when a hyphen or space separates it, or before a Latin name.
+    if text.startswith("ל") and len(text) > 1 and text[1] not in "- " and not text[1].isascii():
+        return text
+    return _LEADING_TO.sub("", text, count=1).strip()
