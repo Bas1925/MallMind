@@ -1,0 +1,221 @@
+/* Directory: warm editorial typography with an original architectural illustration. */
+.discovery-header { max-width: none; padding-inline: max(28px, calc((100vw - 1320px) / 2)); height: 88px; }
+.discovery-header .app-brand { text-align: left; }
+.discovery-nav { display: flex; align-items: center; gap: 32px; align-self: stretch; }
+.discovery-nav > button { display: flex; align-items: center; gap: 8px; position: relative; font-size: 13px; font-weight: 550; color: #63736a; white-space: nowrap; min-height: 44px; }
+.discovery-nav > button:hover, .discovery-nav > button[aria-current] { color: #185b44; }
+.discovery-nav > button[aria-current]::after { content: ""; position: absolute; height: 2px; background: #276a50; bottom: 0; left: 0; right: 0; }
+.discovery-nav > button > span { display: grid; place-items: center; min-width: 23px; height: 23px; border-radius: 50%; background: #eaf0e7; font-size: 11px; }
+.discovery-location { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+.discovery-location > span { margin-left: 5px; padding: 4px 6px; border: 1px solid #d9dfd4; border-radius: 4px; font-size: 9px; letter-spacing: .09em; color: #697466; }
+.store-home { background: #fbfaf7; padding-bottom: 1px; outline: none; }
+.discovery-hero { display: grid; grid-template-columns: 1fr 1fr; max-width: 1440px; margin: auto; min-height: 490px; }
+.hero-copy { padding: 70px 36px 35px max(32px, calc((1440px - 1320px) / 2)); align-self: center; }
+.discovery-kicker { display: flex; align-items: center; gap: 9px; font-size: 10px; font-weight: 650; letter-spacing: .16em; color: #647563; line-height: 1.6; }
+.discovery-kicker > span { width: 6px; height: 6px; border-radius: 50%; background: #789269; }
+.hero-copy h1 { margin: 23px 0; font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: clamp(44px, 4.5vw, 68px); line-height: 1.05; letter-spacing: -.04em; color: #243e30; }
+.hero-copy h1 em { color: #6c825d; font-weight: 400; }
+.hero-description { font-size: 14px; line-height: 1.9; color: #697266; }
+.hero-actions { display: flex; align-items: center; gap: 24px; margin-top: 29px; flex-wrap: wrap; }
+.discovery-primary { display: inline-flex; align-items: center; justify-content: center; gap: 16px; min-height: 48px; padding: 13px 20px; border-radius: 6px; background: #254f3c; color: #fff; font-size: 12px; font-weight: 600; transition: background .2s, transform .2s; text-decoration: none; }
+.discovery-primary:hover { background: #163c2b; transform: translateY(-1px); }
+.discovery-text-button { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 12px; color: #3d5644; }
+.hero-facts { display: flex; align-items: center; gap: 14px; margin-top: 37px; font-size: 10px; color: #72806f; flex-wrap: wrap; }
+.hero-facts strong { font-size: 13px; font-weight: 600; color: #354e39; margin-right: 3px; }
+.hero-facts i { height: 13px; width: 1px; background: #d7ddcf; }
+.hero-illustration { min-width: 0; position: relative; margin: 28px 28px 28px 0; border-radius: 120px 8px 8px 8px; overflow: hidden; background: #ded9bf; }
+.atrium-art { width: 100%; height: 100%; min-height: 440px; object-fit: cover; display: block; }
+.hero-art-label { display: flex; align-items: center; gap: 6px; position: absolute; bottom: 18px; left: 20px; right: 20px; background: #fff9edee; border: 1px solid #ffffff66; padding: 11px 13px; color: #415238; border-radius: 5px; font-size: 10px; }
+.hero-art-label span { margin-left: auto; font-size: 9px; color: #6e7765; }
+.discovery-ribbon { display: flex; align-items: center; justify-content: space-between; gap: 22px; max-width: 1320px; margin: 0 auto; padding: 22px 0; border-top: 1px solid #e4e5d9; border-bottom: 1px solid #e4e5d9; }
+.discovery-ribbon > span { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+.discovery-ribbon strong { font-weight: 600; }
+.discovery-ribbon p { font-size: 12px; color: #707c6d; }
+.discovery-ribbon button { display: flex; align-items: center; gap: 14px; font-size: 12px; font-weight: 600; min-height: 38px; }
+.directory-section { max-width: 1320px; margin: 0 auto; padding: 55px 0 60px; scroll-margin-top: 20px; }
+.directory-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 27px; }
+.directory-heading h2, .discovery-visit-banner h2 { font-family: Georgia, "Times New Roman", serif; font-size: 36px; font-weight: 400; letter-spacing: -.025em; line-height: 1.2; margin-top: 9px; color: #293f2e; }
+.directory-heading > p { font-size: 12px; color: #7d8276; padding-bottom: 4px; }
+.directory-controls { display: grid; grid-template-columns: 1fr 190px 190px; gap: 12px; }
+.directory-search { display: flex; align-items: center; gap: 13px; background: #fff; border: 1px solid #dfe2d6; padding: 0 17px; border-radius: 7px; min-height: 60px; }
+.directory-search svg { color: #75836d; flex-shrink: 0; }
+.directory-search input { width: 100%; min-width: 0; background: transparent; outline: none; font-size: 13px; color: #314332; min-height: 58px; }
+.directory-search input::placeholder { color: #889081; }
+.directory-search:focus-within, .directory-select:focus-within { border-color: #507653; box-shadow: 0 0 0 2px #50765320; }
+.directory-select { display: flex; flex-direction: column; justify-content: center; border: 1px solid #dfe2d6; border-radius: 7px; background: #fff; padding: 8px 14px; min-width: 0; }
+.directory-select > span { font-size: 9px; text-transform: uppercase; color: #7d8674; letter-spacing: .08em; margin-bottom: 3px; }
+.directory-select select { background: transparent; width: 100%; min-height: 26px; font-size: 12px; color: #394d35; outline: none; }
+.directory-categories { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 19px; }
+.directory-categories button { display: flex; align-items: center; gap: 9px; min-height: 40px; border: 1px solid #e0e3d7; border-radius: 30px; padding: 8px 15px; font-size: 11px; color: #667360; background: #fbfaf7; transition: background .2s; }
+.directory-categories button span { font-size: 10px; opacity: .7; }
+.directory-categories button[aria-pressed="true"] { color: #fff; background: #294e3a; border-color: #294e3a; }
+.directory-categories button:hover:not([aria-pressed="true"]) { background: #eff1e8; }
+.directory-results-meta { display: flex; justify-content: space-between; align-items: center; margin: 25px 0 18px; color: #727d6c; font-size: 11px; min-height: 24px; }
+.directory-results-meta > span { font-size: 10px; }
+.directory-results-meta button { display: flex; align-items: center; gap: 6px; text-decoration: underline; min-height: 30px; color: #28533c; }
+.store-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+.store-card { border: 1px solid #e3e4da; border-radius: 10px; overflow: hidden; background: #fff; transition: border-color .2s, box-shadow .2s; min-width: 0; }
+.store-card:hover { border-color: #acb9a0; box-shadow: 0 8px 24px #223b2410; }
+.store-card-art { height: 175px; position: relative; background: #e8ebe0; color: #3e563d; }
+.category-fashion { background: #eee7dc; color: #654c3b; }
+.category-food { background: #e4eadc; color: #426043; }
+.category-electronics { background: #e2e9eb; color: #3b5964; }
+.category-services { background: #eae5eb; color: #635568; }
+.store-floor-tag { position: absolute; top: 14px; left: 13px; display: flex; align-items: center; gap: 5px; font-size: 9px; color: inherit; }
+.store-add { position: absolute; z-index: 1; top: 10px; right: 10px; display: grid; place-items: center; width: 33px; height: 33px; background: #ffffffb8; border: 1px solid #ffffff80; border-radius: 50%; font-size: 21px; color: #3a523c; }
+.store-add:hover { background: #fff; }
+.store-add[aria-pressed="true"] { background: #2d573f; border-color: #2d573f; color: #fff; font-size: 15px; }
+.store-wordmark { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; padding: 36px 20px 16px; }
+.store-wordmark > span { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: clamp(23px, 2.15vw, 33px); letter-spacing: -.04em; line-height: 1.1; }
+.store-wordmark small { font-size: 8px; text-transform: uppercase; letter-spacing: .2em; opacity: .8; }
+.store-brand-logo { display: block; width: var(--logo-width, 155px); max-width: 90%; height: 65px; object-fit: contain; flex-shrink: 0; }
+.store-brand-logo.brand-apple { --logo-width: 57px; }
+.store-brand-logo.brand-adidas { --logo-width: 93px; }
+.store-brand-logo.brand-hm { --logo-width: 95px; }
+.store-brand-logo.brand-mcdonalds { --logo-width: 68px; height: 68px; padding: 8px; background: #bd2329; border-radius: 11px; }
+.store-brand-logo.brand-starbucks { --logo-width: 68px; height: 68px; border-radius: 50%; background: #fff; }
+.store-brand-logo.brand-super-pharm { --logo-width: 130px; }
+.store-detail-art .store-brand-logo { height: 80px; }
+.store-detail-art .brand-mcdonalds, .store-detail-art .brand-starbucks { height: 68px; }
+.directory-avatar .store-brand-logo { width: 32px; max-width: 100%; height: 32px; }
+.directory-avatar .brand-mcdonalds { padding: 4px; border-radius: 6px; }
+.store-card:nth-child(3n+2) .store-wordmark > span { font-family: var(--font-sans), sans-serif; font-weight: 750; letter-spacing: -.05em; }
+.store-card:nth-child(3n) .store-wordmark > span { font-style: italic; }
+.store-card-content { padding: 19px 18px 0; }
+.store-category { font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: #818975; }
+.store-card h3 button { display: flex; width: 100%; align-items: center; justify-content: space-between; text-align: left; gap: 12px; min-height: 35px; font-size: 15px; font-weight: 650; color: #2e4332; }
+.store-card h3 svg { color: #6b8063; flex-shrink: 0; }
+.store-description { font-size: 12px; color: #697260; line-height: 1.65; min-height: 40px; margin: 6px 0 17px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.store-card-actions { display: flex; align-items: center; justify-content: space-between; gap: 7px; padding: 13px 0; border-top: 1px solid #edf0e7; }
+.store-card-actions button { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #416342; min-height: 25px; }
+.store-card-actions > span { font-size: 9px; color: #78846f; }
+.directory-empty { padding: 65px 20px; text-align: center; background: #f1f2eb; border-radius: 10px; }
+.directory-empty > svg { margin: 0 auto 16px; color: #718467; }
+.directory-empty h3 { font-family: Georgia, serif; font-size: 28px; }
+.directory-empty p { color: #71806b; font-size: 13px; margin: 10px 0 22px; }
+.discovery-visit-banner { max-width: 1320px; margin: 0 auto 38px; padding: 38px 44px; background: #edf0e4; border: 1px solid #e0e6d5; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.discovery-visit-banner h2 { font-size: 32px; }
+.discovery-visit-banner p:last-child { font-size: 12px; color: #6c7b60; margin-top: 10px; line-height: 1.7; }
+.discovery-visit-banner .discovery-primary { flex-shrink: 0; }
+.discovery-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; max-width: 1320px; margin: 0 auto; border-top: 1px solid #e0e4d8; padding: 24px 0 30px; color: #7c8571; font-size: 10px; }
+.discovery-footer > span { flex-shrink: 0; }
+.discovery-footer strong { color: #2d513a; font-size: 16px; margin-right: 9px; }
+.discovery-footer p { max-width: 510px; font-size: 9px; line-height: 1.7; }
+.discovery-footer button { display: flex; align-items: center; gap: 8px; flex-shrink: 0; min-height: 36px; }
+.store-home:has(.visit-tray) { padding-bottom: 92px; }
+.visit-tray { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); width: min(640px, calc(100% - 32px)); z-index: 40; display: flex; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 12px; border: 1px solid #526d50; background: #254b38; color: #fff; box-shadow: 0 12px 40px #18312238; }
+.visit-tray-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 8px; background: #ffffff12; flex-shrink: 0; }
+.visit-tray > div { min-width: 0; flex: 1; }
+.visit-tray strong { font-size: 12px; font-weight: 600; }
+.visit-tray p { margin-top: 3px; font-size: 10px; color: #bccdb5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.visit-tray button { display: flex; align-items: center; gap: 10px; flex-shrink: 0; padding: 13px 16px; border-radius: 6px; background: #f2f1e6; color: #294a35; font-weight: 650; font-size: 11px; }
+.store-dialog { width: min(490px, calc(100% - 32px)); max-height: calc(100dvh - 40px); border: 1px solid #d8decf; padding: 0; border-radius: 16px; color: #2e4332; background: #fffefb; box-shadow: 0 24px 90px #18352344; }
+.store-dialog::backdrop { background: #192c2390; backdrop-filter: blur(4px); }
+.store-detail-art { height: 160px; display: grid; place-items: center; position: relative; }
+.store-detail-art > span { font-family: Georgia, serif; font-size: 40px; letter-spacing: -.035em; }
+.store-dialog-close { position: absolute; right: 14px; top: 14px; padding: 9px; background: #ffffffb3; border-radius: 50%; }
+.store-detail-body { padding: 28px; }
+.store-detail-body h2 { font-family: Georgia, serif; font-size: 32px; margin: 6px 0 10px; line-height: 1.15; }
+.store-detail-body > p:not(.discovery-kicker) { font-size: 13px; color: #73816b; line-height: 1.7; }
+.store-detail-body dl { margin: 22px 0; border-block: 1px solid #e4e9dd; padding-block: 8px; }
+.store-detail-body dl > div { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-block: 12px; font-size: 12px; }
+.store-detail-body dt { display: flex; align-items: center; gap: 7px; color: #7a856f; }
+.store-detail-body dd { text-align: right; }
+.store-detail-body .store-hours-note { font-size: 11px !important; margin-bottom: 20px; }
+.store-detail-body > .discovery-primary { width: 100%; }
+.store-detail-secondary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.store-detail-body > small { display: block; font-size: 10px; color: #798671; margin-top: 18px; line-height: 1.7; }
+@media (min-width: 1441px) { .hero-copy { padding-left: 60px; } }
+@media (max-width: 1380px) {
+  .directory-section, .discovery-ribbon, .discovery-footer { margin-inline: 32px; }
+  .discovery-visit-banner { margin-inline: 32px; }
+}
+@media (max-width: 1050px) {
+  .store-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .discovery-nav { gap: 22px; }
+  .discovery-location strong { display: none; }
+  .hero-copy { padding-top: 40px; padding-right: 20px; }
+  .hero-actions { gap: 15px; }
+  .hero-facts { gap: 10px; }
+  .discovery-ribbon p { display: none; }
+  .directory-heading > p { display: none; }
+  .discovery-footer { flex-wrap: wrap; }
+  .discovery-footer p { order: 3; flex-basis: 100%; max-width: none; }
+}
+@media (max-width: 700px) {
+  .discovery-header { height: auto; min-height: 112px; flex-wrap: wrap; gap: 0; padding: 15px 20px 0; }
+  .discovery-header .app-brand { order: 1; }
+  .discovery-header .brand-name { font-size: 19px; }
+  .discovery-header .brand-subtitle { display: block; font-size: 9px; }
+  .discovery-location { order: 2; margin-left: auto; font-size: 10px; }
+  .discovery-location strong { display: inline; }
+  .discovery-location > span { display: none; }
+  .discovery-nav { order: 3; width: 100%; justify-content: space-between; gap: 20px; margin-top: 11px; }
+  .discovery-nav > button { font-size: 12px; min-height: 46px; }
+  .discovery-hero { grid-template-columns: 1fr; }
+  .hero-copy { padding: 35px 24px 26px; }
+  .hero-copy h1 { font-size: 51px; margin: 18px 0; }
+  .hero-description { font-size: 12px; }
+  .hero-actions { margin-top: 23px; gap: 18px; }
+  .hero-actions .discovery-primary { font-size: 11px; padding: 12px 15px; }
+  .discovery-text-button { font-size: 11px; }
+  .hero-facts { margin-top: 22px; gap: 11px; font-size: 9px; }
+  .hero-facts strong { font-size: 12px; }
+  .hero-illustration { margin: 0 20px 23px; height: 270px; border-radius: 65px 7px 7px 7px; }
+  .atrium-art { min-height: 0; width: 100%; height: 100%; }
+  .hero-art-label { bottom: 12px; left: 14px; right: 14px; padding: 9px 11px; }
+  .discovery-ribbon { margin-inline: 20px; padding: 13px 0; gap: 10px; }
+  .discovery-ribbon > span { font-size: 10px; gap: 6px; }
+  .discovery-ribbon > span > svg { width: 15px; }
+  .discovery-ribbon button { font-size: 10px; gap: 5px; }
+  .directory-section { margin-inline: 20px; padding: 34px 0; }
+  .directory-heading { margin-bottom: 21px; }
+  .directory-heading h2 { font-size: 29px; }
+  .discovery-kicker { font-size: 9px; letter-spacing: .13em; }
+  .directory-controls { grid-template-columns: 1fr 1fr; gap: 9px; }
+  .directory-search { grid-column: 1 / -1; min-height: 53px; }
+  .directory-search input { min-height: 51px; font-size: 12px; }
+  .directory-select { padding: 8px 12px; }
+  .directory-categories { gap: 6px; margin-top: 17px; }
+  .directory-categories button { padding: 7px 12px; font-size: 10px; min-height: 36px; }
+  .directory-results-meta { font-size: 10px; margin-top: 18px; }
+  .directory-results-meta > span { font-size: 9px; }
+  .store-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .store-card-art { height: 140px; }
+  .store-wordmark { padding: 45px 8px 22px; }
+  .store-wordmark > span { font-size: 23px; }
+  .store-wordmark small { font-size: 7px; letter-spacing: .1em; }
+  .store-wordmark .store-brand-logo { height: 49px; max-width: 85%; }
+  .store-wordmark .brand-mcdonalds, .store-wordmark .brand-starbucks { width: 49px; }
+  .store-floor-tag { font-size: 8px; left: 9px; top: 14px; gap: 3px; }
+  .store-floor-tag svg { display: none; }
+  .store-add { width: 30px; height: 30px; right: 7px; top: 7px; }
+  .store-card-content { padding: 13px 12px 0; }
+  .store-category { font-size: 8px; letter-spacing: .05em; }
+  .store-card h3 button { font-size: 12px; min-height: 34px; gap: 5px; }
+  .store-card h3 svg { width: 13px; }
+  .store-description { font-size: 11px; min-height: 38px; margin: 3px 0 11px; }
+  .store-card-actions { align-items: start; flex-direction: column; gap: 2px; padding: 9px 0; }
+  .store-card-actions > span { font-size: 8px; }
+  .store-card-actions button { min-height: 34px; font-size: 11px; }
+  .discovery-visit-banner { margin: 0 20px 25px; padding: 25px 22px; flex-direction: column; align-items: start; gap: 20px; }
+  .discovery-visit-banner h2 { font-size: 29px; }
+  .discovery-footer { margin-inline: 20px; gap: 12px; }
+  .discovery-footer > span { font-size: 9px; }
+  .discovery-footer button { font-size: 9px; }
+  .visit-tray { bottom: 12px; padding: 10px; gap: 10px; width: calc(100% - 24px); }
+  .visit-tray-icon { display: none; }
+  .visit-tray strong { font-size: 11px; }
+  .visit-tray button { padding: 13px 11px; font-size: 10px; gap: 6px; }
+  .store-detail-body { padding: 23px; }
+}
+@media (max-width: 359px) {
+  .hero-copy h1 { font-size: 44px; }
+  .hero-facts { gap: 8px; }
+  .store-grid { grid-template-columns: 1fr; }
+  .store-card-art { height: 155px; }
+  .discovery-ribbon > span { max-width: 170px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .discovery-primary, .store-card, .directory-categories button { transition: none; }
+}

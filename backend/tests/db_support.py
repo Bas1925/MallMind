@@ -25,13 +25,17 @@ def is_placeholder_url(url: str) -> bool:
 def postgres_reachable(url: str | None = None) -> bool:
     url = url or database_url()
     if is_placeholder_url(url):
+        if os.environ.get("REQUIRE_DATABASE_TESTS") == "1":
+            raise RuntimeError("REQUIRE_DATABASE_TESTS=1 requires a dedicated test DATABASE_URL")
         return False
     sync_url = url.replace("+asyncpg", "+psycopg").replace("postgresql+psycopg://", "postgresql://")
     try:
         with psycopg.connect(sync_url, connect_timeout=3) as conn:
             conn.execute("SELECT 1")
         return True
-    except Exception:  # noqa: BLE001 — skip-check must never crash the suite
+    except Exception as exc:
+        if os.environ.get("REQUIRE_DATABASE_TESTS") == "1":
+            raise RuntimeError("Required test PostgreSQL is unreachable") from exc
         return False
 
 

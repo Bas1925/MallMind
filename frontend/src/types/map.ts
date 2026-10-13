@@ -1,5 +1,6 @@
 export type RouteProfile = "normal" | "wheelchair" | "avoid_stairs";
 export type CostMode = "distance" | "time";
+export type SearchAlgorithm = "astar" | "bfs" | "dfs";
 
 export interface MapMall {
   id: string;
@@ -71,6 +72,7 @@ export interface RouteResponse {
   from_location: string;
   to_location: string;
   node_ids: string[];
+  visited_ids?: string[];
 }
 
 export interface ApiError {

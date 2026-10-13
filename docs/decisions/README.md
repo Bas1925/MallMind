@@ -79,3 +79,4 @@ ADRs are numbered sequentially starting at 001. Numbers are never reused. If an 
 | [012](012-embedding-provider-abstraction.md) | One embedding provider, local by default | Accepted |
 | [013](013-tool-first-mall-assistant.md) | Assistant calls tools; the model only phrases | Accepted |
 | [014](014-shopping-route-optimization-strategy.md) | Open tour: Held-Karp through 12 stops, then NN + 2-opt | Accepted |
+| [015](015-device-local-parking-before-auth.md) | Device-local parking before account sync | Accepted |

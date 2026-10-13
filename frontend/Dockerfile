@@ -12,14 +12,14 @@
 # `output: "standalone"` for a slim runtime image.
 # =============================================================================
 
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
 
 # Install deps against the lockfile for reproducibility. If the lockfile
 # doesn't exist yet (first `docker compose up`), fall back to `npm install`
 # which will generate one.
-COPY package.json package-lock.json* ./
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
 

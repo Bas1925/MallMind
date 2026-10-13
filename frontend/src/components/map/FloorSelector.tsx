@@ -11,7 +11,7 @@ interface FloorSelectorProps {
 
 export function FloorSelector({ floors, activeLevel, routeLevels, onChange }: FloorSelectorProps) {
   return (
-    <div className="glass flex gap-0.5 rounded-full p-1" role="tablist" aria-label="Floor">
+    <div className="flex gap-0.5 rounded-xl border border-[#dfe4dc] bg-white p-1 shadow-[0_2px_8px_rgba(36,60,53,0.04)]" role="tablist" aria-label="Floor">
       {floors.map((floor) => {
         const active = floor.level === activeLevel;
         const onRoute = routeLevels.includes(floor.level);
@@ -22,16 +22,16 @@ export function FloorSelector({ floors, activeLevel, routeLevels, onChange }: Fl
             role="tab"
             aria-selected={active}
             onClick={() => onChange(floor.level)}
-            className={`relative rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
+            className={`relative whitespace-nowrap rounded-lg px-3 py-2 text-[11px] font-semibold transition sm:px-4 sm:text-xs ${
               active
-                ? "bg-mist-50 text-ink-950 shadow"
-                : "text-mist-400 hover:bg-white/[0.06] hover:text-mist-50"
+                ? "bg-[#243c35] text-white"
+                : "text-[#77827a] hover:bg-[#f4f6f1] hover:text-[#243c35]"
             }`}
           >
             {floor.name}
             {onRoute && !active ? (
               <span
-                className="absolute end-1.5 top-1 h-1.5 w-1.5 rounded-full bg-gold-400 shadow-[0_0_8px_rgba(232,184,106,0.9)]"
+                className="absolute end-1.5 top-1.5 h-1 w-1 rounded-full bg-[#176b52]"
                 aria-hidden
               />
             ) : null}

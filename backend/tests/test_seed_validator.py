@@ -19,7 +19,7 @@ def test_nova_mall_seed_is_valid() -> None:
     doc = build_nova_mall()
     assert_valid(doc)
     assert len(doc.floors) == 3
-    assert 25 <= len(doc.locations) <= 32
+    assert 25 <= len(doc.locations) <= 40
     assert len(doc.nodes) >= 80
     assert len(doc.edges) >= 150
 

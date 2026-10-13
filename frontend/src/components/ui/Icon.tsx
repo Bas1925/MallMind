@@ -21,6 +21,7 @@ const PATHS = {
   wheelchair: "M11 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM10 7v6h6l2 6m-8-9a5 5 0 1 0 5.5 7.5",
   clock: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-13v4l3 2",
   ruler: "M3 17 17 3l4 4L7 21l-4-4Zm4-4 2 2m2-6 2 2m2-6 2 2",
+  car: "M5 17h14M6 17v2m12-2v2M4 13l2-5h12l2 5v4H4v-4Zm3.5 1h.01m9 0h.01M7 8l1-3h8l1 3",
 } as const;
 
 export type IconName = keyof typeof PATHS;

@@ -4,21 +4,25 @@ on:
   push:
     branches: [main]
     paths:
-      - "mallmind/backend/**"
-      - "mallmind/.github/workflows/backend-ci.yml"
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
   pull_request:
     paths:
-      - "mallmind/backend/**"
-      - "mallmind/.github/workflows/backend-ci.yml"
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
 
 defaults:
   run:
-    working-directory: mallmind/backend
+    working-directory: backend
+
+permissions:
+  contents: read
 
 jobs:
   lint:
     name: Lint (ruff)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -26,7 +30,7 @@ jobs:
           python-version: "3.12"
           cache: "pip"
           # Cache on the lockfile — anything else makes caching unreliable.
-          cache-dependency-path: mallmind/backend/requirements-dev-lock.txt
+          cache-dependency-path: backend/requirements-dev-lock.txt
       # Deterministic install from the lockfile. `pip install .` makes our
       # package importable so ruff can analyse it as an installed project.
       - run: pip install --upgrade pip
@@ -40,6 +44,7 @@ jobs:
   test:
     name: Tests (pytest)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -62,6 +67,7 @@ jobs:
       DATABASE_URL: postgresql+asyncpg://mallmind:mallmind_ci@localhost:5432/mallmind
       ENVIRONMENT: ci
       LOG_LEVEL: WARNING
+      REQUIRE_DATABASE_TESTS: "1"
 
     steps:
       - uses: actions/checkout@v4
@@ -69,7 +75,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: mallmind/backend/requirements-dev-lock.txt
+          cache-dependency-path: backend/requirements-dev-lock.txt
       - run: pip install --upgrade pip
       - run: pip install -r requirements-dev-lock.txt
       - run: pip install --no-deps .

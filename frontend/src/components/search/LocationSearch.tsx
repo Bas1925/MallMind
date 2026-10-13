@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { searchLocations } from "@/lib/api";
 import { Icon } from "@/components/ui/Icon";
 import { filterLocations } from "@/lib/location-search";
@@ -24,23 +24,41 @@ interface ResultRow {
 export function LocationSearch({ locations, onPick }: LocationSearchProps) {
   const [query, setQuery] = useState("");
   const [remote, setRemote] = useState<SearchHit[]>([]);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const [pending, setPending] = useState(false);
+  const listId = useId();
   const local = useMemo(() => filterLocations(locations, query), [locations, query]);
 
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 2) {
       setRemote([]);
+      setPending(false);
       return;
     }
+    const controller = new AbortController();
+    setPending(true);
     const handle = window.setTimeout(() => {
-      searchLocations(trimmed)
-        .then(setRemote)
-        .catch(() => setRemote([]));
+      searchLocations(trimmed, controller.signal)
+        .then((hits) => { if (!controller.signal.aborted) setRemote(hits); })
+        .catch(() => { if (!controller.signal.aborted) setRemote([]); })
+        .finally(() => { if (!controller.signal.aborted) setPending(false); });
     }, 250);
-    return () => window.clearTimeout(handle);
+    return () => { window.clearTimeout(handle); controller.abort(); };
   }, [query]);
 
   const results = useMemo(() => mergeResults(local, remote), [local, remote]);
+  const expanded = open && query.trim() !== "" && results.length > 0;
+  const activeIndex = Math.min(active, results.length - 1);
+
+  function pick(id: string): void {
+    onPick(id);
+    setQuery("");
+    setRemote([]);
+    setOpen(false);
+    setActive(0);
+  }
 
   return (
     <div className="relative">
@@ -54,25 +72,58 @@ export function LocationSearch({ locations, onPick }: LocationSearchProps) {
         <input
           data-testid="location-search"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={expanded}
+          aria-controls={expanded ? listId : undefined}
+          aria-activedescendant={expanded ? `${listId}-${activeIndex}` : undefined}
+          autoComplete="off"
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setRemote([]);
+            setOpen(true);
+            setActive(0);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") { setOpen(false); return; }
+            if (results.length === 0) return;
+            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+              event.preventDefault();
+              setOpen(true);
+              const delta = event.key === "ArrowDown" ? 1 : -1;
+              setActive((index) => open ? (index + delta + results.length) % results.length : 0);
+            } else if (event.key === "Enter" && expanded) {
+              event.preventDefault();
+              const result = results[activeIndex];
+              if (result !== undefined) pick(result.id);
+            }
+          }}
           placeholder="Search stores, restrooms, ATMs…"
           className="field ps-10"
         />
       </label>
-      {results.length > 0 ? (
+      {expanded ? (
         <ul
+          id={listId}
+          role="listbox"
+          aria-label="Places"
           data-testid="search-results"
-          className="scroll-thin absolute z-20 mt-2 max-h-64 w-full overflow-auto rounded-2xl border border-white/[0.08] bg-ink-800/95 p-1 shadow-glass backdrop-blur-xl"
+          className="scroll-thin absolute z-20 mt-2 max-h-64 w-full overflow-auto rounded-xl border border-ink-600 bg-white p-1 shadow-glass"
         >
-          {results.map((loc) => (
-            <li key={loc.id}>
+          {results.map((loc, index) => (
+            <li key={loc.id} role="none">
               <button
+                id={`${listId}-${index}`}
+                role="option"
+                aria-selected={index === activeIndex}
+                tabIndex={-1}
                 type="button"
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start transition hover:bg-white/[0.05]"
-                onClick={() => {
-                  onPick(loc.id);
-                  setQuery("");
-                }}
+                className={`flex w-full items-center gap-3 rounded-lg px-3 py-3 text-start transition hover:bg-ink-850 ${index === activeIndex ? "bg-ink-850" : ""}`}
+                onMouseDown={(event) => event.preventDefault()}
+                onMouseEnter={() => setActive(index)}
+                onClick={() => pick(loc.id)}
               >
                 <span
                   className="h-2 w-2 shrink-0 rounded-full"
@@ -89,6 +140,11 @@ export function LocationSearch({ locations, onPick }: LocationSearchProps) {
             </li>
           ))}
         </ul>
+      ) : null}
+      {open && query.trim() !== "" && results.length === 0 ? (
+        <p role="status" className="mt-2 text-xs text-mist-400">
+          {pending ? "Searching…" : "No places found. Try a store name or a service like ATM."}
+        </p>
       ) : null}
     </div>
   );

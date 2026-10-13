@@ -3,7 +3,7 @@
 > This is the master plan written at project start. It is a snapshot, not a living document.
 > When any part of it changes materially, write an ADR explaining why and update the "Status" line below.
 
-**Status:** Approved, 2026-10-05 — **Phase 5 implemented** (open shopping tour on the existing A* matrix). Live chat-model verification is still pending (no `LLM_API_KEY`). Phase 0b Docker Compose remains failed locally (VMP). Stop before auth and parking.
+**Status:** Approved, 2026-10-05 — **Phase 6 implemented** as device-local parking memory (ADR-015). Authenticated cross-device sync remains pending. Live chat-model verification is still pending (no `LLM_API_KEY`). Phase 0b Docker Compose remains failed locally (VMP).
 
 ---
 
@@ -221,11 +221,11 @@ mallmind/
 | **0b. Scaffolding** | 2 | Repo, docker-compose, FastAPI `/health`, Next.js home, CI lint+test, lockfiles | Partial: code + CI ✅; local `docker compose up` ❌ (VMP) |
 | **1. Data model + seed** | 3 | Migrations, seed from the HTML prototype | ✅ Alembic + NOVA seed on portable PG 16.15 |
 | **2. A* + Dijkstra + accessible mode** | 5 | Pure functions, unit-tested; HTTP route | ✅ 71 pytest; real benches; stop before map UI |
-| **3. Nav API + minimal map UI** | 4 | `POST /navigation/route` + SVG renderer with path overlay | Click origin → destination and see a real A* overlay |
+| **3. Nav API + minimal map UI** | 4 | `POST /navigation/route` + SVG renderer with path overlay | ✅ Real A* route rendered across floor-local SVG maps |
 | **4. Hybrid search + assistant** | 3 | Trigram + semantic + ranked merge; tool-first answers | ✅ Lexical 12/13, hybrid 12/13 top-1 and 13/13 top-3. Gucci refused. Live LLM pending. |
 | **5. Multi-stop tour** | 2 | Open tour on the existing A* matrix | ✅ Held-Karp through 12 stops, NN + 2-opt after. Canonical NOVA list 442.5 m → 382.5 m. ADR-014. |
-| **6. TSP tour optimizer** | 2 | Same work as Phase 5 | Do not schedule twice. Shipped as Phase 5. |
-| **7. Auth + parking** | 2 | JWT, bcrypt, parking CRUD | Login → save spot → retrieve |
+| **6. Parking memory** | 1 | Privacy-first browser persistence + route to entrance | ✅ Versioned local record, validation, save/clear/restore, existing A* integration. ADR-015. |
+| **7. Auth + sync** | 2 | Account security and optional cross-device parking sync | Login → opt in to sync → retrieve on another device |
 | **8. Testing polish + Playwright** | 3 | 3 happy-path E2Es; raise service coverage | CI green on all three test tiers |
 | **9. Deploy** | 2 | Cloud deploy + live demo link | Public URL in README |
 
@@ -250,6 +250,7 @@ Each becomes a dedicated ADR as we hit it. Status column tracks progress.
 | 9 | JWT access + refresh over sessions | TBD | Pending (Phase 7) |
 | 10 | TypeScript strict mode, zero `any` | `frontend/tsconfig.json` | ✅ Phase 3 (no codegen, no `any`) |
 | 11 | Pytest-heavy, Playwright-light test pyramid | TBD | Pending (Phase 8); first Playwright route test in Phase 3 |
+| 12 | Device-local parking before account sync | `015-device-local-parking-before-auth.md` | ✅ Phase 6 |
 
 ## Open decisions
 
@@ -258,3 +259,4 @@ Each becomes a dedicated ADR as we hit it. Status column tracks progress.
 | LLM provider (OpenAI-compatible HTTP). Local MiniLM is the embedder. | No | Chat key still unset after Phase 5 |
 | Open tour vs a required final door | No | Phase 5 shipped the open tour. A fixed end would extend ADR-014, not replace A*. |
 | Cloud target (Azure App Service / Container Apps / other) | No | Phase 9 |
+| Account and cross-device parking sync | No | Phase 7; local parking remains useful without an account |

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import heapq
 import uuid
+from dataclasses import replace
 
 from app.routing.dijkstra import _reconstruct
 from app.routing.heuristic import heuristic
@@ -42,6 +43,7 @@ def astar(
     g: dict[uuid.UUID, float] = {start: 0.0}
     prev_edge: dict[uuid.UUID, GraphEdge] = {}
     expanded = 0
+    order: list[uuid.UUID] = []
     seq = 0
     start_h = heuristic(graph.nodes[start], goal_node, cost_mode)
     heap: list[tuple[float, int, uuid.UUID]] = [(start_h, seq, start)]
@@ -52,9 +54,13 @@ def astar(
         if current in closed:
             continue
         closed.add(current)
+        order.append(current)
         expanded += 1
         if current == goal:
-            return _reconstruct(graph, start, goal, prev_edge, algo, expanded)
+            return replace(
+                _reconstruct(graph, start, goal, prev_edge, algo, expanded),
+                visited_ids=tuple(order),
+            )
         g_current = g[current]
         for edge in graph.neighbors(current):
             if not allow(edge):
@@ -70,4 +76,4 @@ def astar(
                 h = heuristic(graph.nodes[nxt], goal_node, cost_mode)
                 heapq.heappush(heap, (tentative + h, seq, nxt))
 
-    return RouteResult.fail(algo, "no_path", nodes_expanded=expanded)
+    return RouteResult.fail(algo, "no_path", nodes_expanded=expanded, visited_ids=tuple(order))

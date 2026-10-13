@@ -617,12 +617,102 @@ def _categories() -> list[SeedCategory]:
     ]
 
 
+def _build_search_maze(b: _Builder) -> None:
+    """Ground-floor service maze used to show BFS and DFS.
+
+    Three corridors leave Search start:
+      north — 3 hops to Search goal (the fewest steps)
+      east — a long hall with two dead ends that also reaches the goal
+      south — a 4-hop service link into the mall, so a 3-hop search
+              stays inside the maze
+
+    DFS tries farther-east neighbors first, so it walks the east hall
+    and both dead ends before it ever steps north.
+    """
+    start = (128.0, 10.0)
+    goal = (128.0, 64.0)
+    b.add_node("maze-start", FLOOR_GROUND, NodeType.INFO_DESK, *start, location_slug="search-start")
+    b.add_node("maze-goal", FLOOR_GROUND, NodeType.INFO_DESK, *goal, location_slug="search-goal")
+    points = {
+        "maze-s1": (128.0, 28.0),
+        "maze-s2": (128.0, 46.0),
+        "maze-a1": (150.0, 10.0),
+        "maze-a2": (172.0, 10.0),
+        "maze-a3": (194.0, 10.0),
+        "maze-b1": (216.0, 10.0),
+        "maze-b2": (216.0, 28.0),
+        "maze-c1": (194.0, 28.0),
+        "maze-c2": (172.0, 28.0),
+        "maze-d1": (172.0, 46.0),
+        "maze-d2": (194.0, 46.0),
+        "maze-c3": (150.0, 28.0),
+        "maze-c4": (150.0, 46.0),
+        "maze-c5": (150.0, 64.0),
+        "maze-link1": (128.0, -6.0),
+        "maze-link2": (150.0, -6.0),
+        "maze-link3": (110.0, -6.0),
+    }
+    for key, (x, y) in points.items():
+        b.add_node(key, FLOOR_GROUND, NodeType.HALLWAY_JUNCTION, x, y)
+
+    def link(a: str, c: str) -> None:
+        b.bidir(a, c, distance_m=_dist((b.nodes[a].x, b.nodes[a].y), (b.nodes[c].x, b.nodes[c].y)))
+
+    link("maze-start", "maze-s1")
+    link("maze-s1", "maze-s2")
+    link("maze-s2", "maze-goal")
+    for left, right in (
+        ("maze-start", "maze-a1"),
+        ("maze-a1", "maze-a2"),
+        ("maze-a2", "maze-a3"),
+        ("maze-a3", "maze-b1"),
+        ("maze-b1", "maze-b2"),
+        ("maze-a3", "maze-c1"),
+        ("maze-c1", "maze-c2"),
+        ("maze-c2", "maze-d1"),
+        ("maze-d1", "maze-d2"),
+        ("maze-c2", "maze-c3"),
+        ("maze-c3", "maze-c4"),
+        ("maze-c4", "maze-c5"),
+        ("maze-c5", "maze-goal"),
+        ("maze-start", "maze-link1"),
+        ("maze-link1", "maze-link2"),
+        ("maze-link2", "maze-link3"),
+    ):
+        link(left, right)
+    link("maze-link3", _hallway_key(FLOOR_GROUND, 110, 10))
+
+    b.add_location(
+        slug="search-start",
+        name="Search start",
+        category_slug="services",
+        floor_key=FLOOR_GROUND,
+        node_type=NodeType.INFO_DESK,
+        x=start[0],
+        y=start[1],
+        description="West door of the service maze, for comparing BFS and DFS.",
+        existing_node_key="maze-start",
+    )
+    b.add_location(
+        slug="search-goal",
+        name="Search goal",
+        category_slug="services",
+        floor_key=FLOOR_GROUND,
+        node_type=NodeType.INFO_DESK,
+        x=goal[0],
+        y=goal[1],
+        description="North door of the service maze. Both halls end here.",
+        existing_node_key="maze-goal",
+    )
+
+
 def build_nova_mall() -> SeedDocument:
     """Return a fully-populated, not-yet-validated seed document."""
     b = _Builder()
     _build_hallway_grid(b)
     _build_vertical_shafts(b)
     _build_locations(b)
+    _build_search_maze(b)
     return SeedDocument(
         mall=SeedMall(slug="nova-mall", name="NOVA Mall", city="Fictional City", timezone="UTC"),
         floors=[

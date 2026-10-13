@@ -53,11 +53,22 @@ class RouteResult:
     total_seconds: float = 0.0
     nodes_expanded: int = 0
     failure_reason: str | None = None
+    # Expansion order. BFS and DFS draw this on the map so the search is visible.
+    visited_ids: tuple[uuid.UUID, ...] = ()
 
     @staticmethod
-    def fail(algorithm: str, reason: str, nodes_expanded: int = 0) -> RouteResult:
+    def fail(
+        algorithm: str,
+        reason: str,
+        nodes_expanded: int = 0,
+        visited_ids: tuple[uuid.UUID, ...] = (),
+    ) -> RouteResult:
         return RouteResult(
-            ok=False, algorithm=algorithm, failure_reason=reason, nodes_expanded=nodes_expanded
+            ok=False,
+            algorithm=algorithm,
+            failure_reason=reason,
+            nodes_expanded=nodes_expanded,
+            visited_ids=visited_ids,
         )
 
 

@@ -13,9 +13,9 @@ async def test_map_payload_shape(api_client: AsyncClient) -> None:
     body = response.json()
     assert body["mall"]["slug"] == "nova-mall"
     assert len(body["floors"]) == 3
-    assert len(body["locations"]) == 31
-    assert len(body["nodes"]) == 91
-    assert len(body["edges"]) == 248
+    assert len(body["locations"]) == 33
+    assert len(body["nodes"]) == 110
+    assert len(body["edges"]) == 288
     nike = next(loc for loc in body["locations"] if loc["slug"] == "nike")
     assert nike["x"] is not None
     assert nike["floor_level"] == 0

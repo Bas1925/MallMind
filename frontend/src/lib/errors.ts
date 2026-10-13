@@ -4,7 +4,7 @@ export function routeErrorMessage(error: unknown): string {
   if (error instanceof HttpError) {
     switch (error.code) {
       case "no_accessible_path":
-        return "No wheelchair-accessible route between these locations. Try Standard, or pick a different pair.";
+        return "No wheelchair-accessible route between these locations. Try Walking, or pick a different pair.";
       case "no_path":
         return "No route exists between these locations.";
       case "unknown_location":

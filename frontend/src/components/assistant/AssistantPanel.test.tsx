@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AssistantPanel } from "@/components/assistant/AssistantPanel";
@@ -6,6 +6,23 @@ import { AssistantPanel } from "@/components/assistant/AssistantPanel";
 describe("AssistantPanel", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+  });
+
+  it("does not apply a late action after leaving the assistant", async () => {
+    const user = userEvent.setup();
+    const onAction = vi.fn();
+    let finish: ((response: Response) => void) | undefined;
+    vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>((resolve) => { finish = resolve; })));
+    const { unmount } = render(
+      <AssistantPanel profile="normal" currentLocationId={null} onAction={onAction} />,
+    );
+    await user.type(screen.getByTestId("assistant-input"), "Take me to Nike");
+    await user.click(screen.getByTestId("assistant-submit"));
+    unmount();
+    await act(async () => { finish?.(new Response(JSON.stringify({
+      answer: "Nike", language: "en", actions: [{ type: "highlight_location", location_id: "loc-nike" }],
+    }))); });
+    expect(onAction).not.toHaveBeenCalled();
   });
 
   it("applies a show_route action from the assistant response", async () => {

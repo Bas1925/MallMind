@@ -54,3 +54,13 @@ yarn-error.log*
 # --- Playwright ---
 playwright-report/
 test-results/
+.validation/
+
+# Private keys and personal exports are never portfolio source.
+*.pem
+*.key
+*.p12
+*.pfx
+*.dump
+*.sql.gz
+*.webm

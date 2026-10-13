@@ -28,6 +28,11 @@ describe("location search", () => {
     ).toBe(true);
   });
 
+  it("keeps a two-letter query on the place name", () => {
+    const hits = filterLocations(MAP_FIXTURE.locations, "ni");
+    expect(hits.map((loc) => loc.name)).toEqual(["Nike"]);
+  });
+
   it("returns name, category, and floor in filtered results", () => {
     const hits = filterLocations(MAP_FIXTURE.locations, "nike");
     expect(hits).toHaveLength(1);

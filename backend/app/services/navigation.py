@@ -13,6 +13,7 @@ from app.routing.astar import astar
 from app.routing.dijkstra import dijkstra
 from app.routing.instructions import floors_on_route, instructions_for
 from app.routing.policy import filter_for
+from app.routing.search import bfs, dfs
 from app.routing.types import CostMode, MallGraph, RouteProfile, RouteResult
 
 _STATUS = {
@@ -83,9 +84,10 @@ class NavigationService:
         except ValueError as exc:
             raise NavigationError("invalid_cost_mode", f"unknown cost_mode {cost_mode!r}") from exc
         algo = algorithm.lower().strip()
-        if algo not in {"astar", "dijkstra"}:
+        routers = {"astar": astar, "dijkstra": dijkstra, "bfs": bfs, "dfs": dfs}
+        router = routers.get(algo)
+        if router is None:
             raise NavigationError("invalid_algorithm", f"unknown algorithm {algorithm!r}")
-        router = astar if algo == "astar" else dijkstra
 
         origin_id = _as_uuid(from_location_id, "from_location_id")
         dest_id = _as_uuid(to_location_id, "to_location_id")
@@ -103,13 +105,17 @@ class NavigationService:
             raise NavigationError("missing_anchor", f"{dest.slug} has no map anchor")
 
         graph = await self._repo.load_mall_graph()
-        result = router(
-            graph,
-            origin.anchor_node.id,
-            dest.anchor_node.id,
-            cost_mode=mode,
-            allow=filter_for(pol),
-        )
+        allow = filter_for(pol)
+        if algo in {"bfs", "dfs"}:
+            result = router(graph, origin.anchor_node.id, dest.anchor_node.id, allow=allow)
+        else:
+            result = router(
+                graph,
+                origin.anchor_node.id,
+                dest.anchor_node.id,
+                cost_mode=mode,
+                allow=allow,
+            )
         if not result.ok:
             code = result.failure_reason or "no_path"
             if code == "no_path" and pol is not RouteProfile.NORMAL:

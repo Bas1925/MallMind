@@ -4,29 +4,33 @@ on:
   push:
     branches: [main]
     paths:
-      - "mallmind/frontend/**"
-      - "mallmind/.github/workflows/frontend-ci.yml"
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
   pull_request:
     paths:
-      - "mallmind/frontend/**"
-      - "mallmind/.github/workflows/frontend-ci.yml"
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
 
 defaults:
   run:
-    working-directory: mallmind/frontend
+    working-directory: frontend
+
+permissions:
+  contents: read
 
 jobs:
   check:
     name: Lint + typecheck + build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
-          cache-dependency-path: mallmind/frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       # Deterministic install. `npm ci` requires a lockfile and fails
       # loudly if package.json and package-lock.json disagree.
@@ -41,8 +45,11 @@ jobs:
 
       - name: Next.js build
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_API_URL: ""
         run: npm run build
 
       - name: Vitest (Testing Library)
         run: npm test
+
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high

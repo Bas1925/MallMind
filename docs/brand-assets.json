@@ -1,0 +1,88 @@
+[
+  {
+    "name": "Adidas",
+    "file": "adidas.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/14.0.0/icons/adidas.svg",
+    "brandSource": "https://www.adidas.com",
+    "color": "000000",
+    "license": "Simple Icons 14.0.0: CC0-1.0; brand trademark rights retained",
+    "modification": "Brand color applied; viewBox whitespace trimmed; path geometry unchanged"
+  },
+  {
+    "name": "Apple",
+    "file": "apple.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/14.0.0/icons/apple.svg",
+    "brandSource": "https://www.apple.com",
+    "color": "000000",
+    "license": "Simple Icons 14.0.0: CC0-1.0; brand trademark rights retained",
+    "modification": "Brand color applied; viewBox whitespace trimmed; path geometry unchanged"
+  },
+  {
+    "name": "H&M",
+    "file": "handm.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/14.0.0/icons/handm.svg",
+    "brandSource": "https://www2.hm.com/en_gb/index.html",
+    "color": "E50010",
+    "license": "Simple Icons 14.0.0: CC0-1.0; brand trademark rights retained",
+    "modification": "Brand color applied; viewBox whitespace trimmed; path geometry unchanged"
+  },
+  {
+    "name": "McDonald's",
+    "file": "mcdonalds.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/14.0.0/icons/mcdonalds.svg",
+    "brandSource": "https://www.mcdonalds.com/gb/en-gb/newsroom.html",
+    "color": "FBC817",
+    "license": "Simple Icons 14.0.0: CC0-1.0; brand trademark rights retained",
+    "modification": "Brand color applied; viewBox whitespace trimmed; path geometry unchanged"
+  },
+  {
+    "name": "Nike",
+    "file": "nike.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/14.0.0/icons/nike.svg",
+    "brandSource": "https://www.nike.com",
+    "color": "111111",
+    "license": "Simple Icons 14.0.0: CC0-1.0; brand trademark rights retained",
+    "modification": "Brand color applied; viewBox whitespace trimmed; path geometry unchanged"
+  },
+  {
+    "name": "Samsung",
+    "file": "samsung.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/14.0.0/icons/samsung.svg",
+    "brandSource": "https://www.samsung.com/us/about-us/brand-identity/logo/",
+    "color": "1428A0",
+    "license": "Simple Icons 14.0.0: CC0-1.0; brand trademark rights retained",
+    "modification": "Brand color applied; viewBox whitespace trimmed; path geometry unchanged"
+  },
+  {
+    "name": "Starbucks",
+    "file": "starbucks.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/14.0.0/icons/starbucks.svg",
+    "brandSource": "https://starbucks.com",
+    "color": "006241",
+    "license": "Simple Icons 14.0.0: CC0-1.0; brand trademark rights retained",
+    "modification": "Brand color applied; viewBox whitespace trimmed; path geometry unchanged"
+  },
+  {
+    "name": "Zara",
+    "file": "zara.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/14.0.0/icons/zara.svg",
+    "brandSource": "https://www.zara.com",
+    "color": "000000",
+    "license": "Simple Icons 14.0.0: CC0-1.0; brand trademark rights retained",
+    "modification": "Brand color applied; viewBox whitespace trimmed; path geometry unchanged"
+  },
+  {
+    "name": "MUJI",
+    "file": "muji.png",
+    "source": "https://www.muji.us/cdn/shop/files/MUJI_Logo_NEW.png?v=1766089002&width=600",
+    "brandSource": "https://www.muji.us/",
+    "modification": "Unmodified official storefront image"
+  },
+  {
+    "name": "Super-Pharm",
+    "file": "super-pharm.png",
+    "source": "https://shop.super-pharm.co.il/medias/sp-online-130.png?context=bWFzdGVyfGltYWdlc3wzNzg1fGltYWdlL3BuZ3xjM2x6TFcxaGMzUmxjaTlwYldGblpYTXZhRFF5TDJoaVlTODVNRE01TnpJek16TXhOakUwTDNOd1gyOXViR2x1WlY4eE16QXVjRzVufDNjNjlhYTc4NzE0ODYyMTllMDI3NTJkMzQzMTk5ZWMwODU4MmJjNDg2ZDZlYmI0YWMwN2IzYmIwNWI2ZTgxZDA",
+    "brandSource": "https://shop.super-pharm.co.il/",
+    "modification": "Unmodified official storefront image"
+  }
+]

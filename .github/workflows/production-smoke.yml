@@ -1,0 +1,59 @@
+name: production-containers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "compose.production.yml"
+      - ".github/workflows/production-smoke.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "compose.production.yml"
+      - ".github/workflows/production-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      COMPOSE_PROJECT_NAME: mallmind-ci
+      POSTGRES_PASSWORD: ci-only-ephemeral
+      DATABASE_URL: postgresql+asyncpg://mallmind:ci-only-ephemeral@postgres:5432/mallmind
+      SITE_URL: http://127.0.0.1:3000
+      EMBEDDING_PROVIDER: none
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production containers
+        run: docker compose -f compose.production.yml build
+      - name: Prepare isolated database
+        run: |
+          docker compose -f compose.production.yml up -d --wait postgres
+          docker compose -f compose.production.yml run --rm backend alembic upgrade head
+          docker compose -f compose.production.yml run --rm backend python -m app.seed
+      - name: Start production stack
+        run: docker compose -f compose.production.yml up -d --wait
+      - name: Check page and same-origin API
+        run: |
+          curl --fail --silent http://127.0.0.1:3000/ > /dev/null
+          curl --fail --silent http://127.0.0.1:3000/api/v1/health
+          curl --fail --silent http://127.0.0.1:3000/api/v1/malls/nova-mall/map | python -c 'import json,sys; data=json.load(sys.stdin); assert len(data["locations"]) == 33; assert len(data["floors"]) == 3; assert {"nike", "apple", "search-start", "search-goal"} <= {place["slug"] for place in data["locations"]}'
+      - name: Collect logs
+        if: always()
+        run: docker compose -f compose.production.yml logs --no-color > production-smoke.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-smoke
+          path: production-smoke.log
+          retention-days: 14
+      - name: Remove disposable CI stack
+        if: always()
+        run: docker compose -f compose.production.yml down --volumes

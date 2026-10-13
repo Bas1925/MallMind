@@ -31,7 +31,7 @@ async def create_route(body: RouteRequest, db: AsyncSession = Depends(get_sessio
             body.to_location_id,
             profile=body.profile,
             cost_mode=body.cost_mode,
-            algorithm="astar",
+            algorithm=body.algorithm,
         )
     except NavigationError as exc:
         return JSONResponse(
@@ -50,6 +50,7 @@ async def create_route(body: RouteRequest, db: AsyncSession = Depends(get_sessio
         from_location=nav.from_location.name,
         to_location=nav.to_location.name,
         node_ids=list(nav.result.node_ids),
+        visited_ids=list(nav.result.visited_ids),
     )
     return JSONResponse(status_code=200, content=payload.model_dump(mode="json"))
 

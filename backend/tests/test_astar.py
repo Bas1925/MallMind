@@ -77,7 +77,7 @@ def test_heuristic_is_consistent_on_grid_edges() -> None:
 def test_astar_matches_dijkstra_on_every_nova_location_pair() -> None:
     g = graph_from_seed(build_nova_mall())
     loc_nodes = [n for n in g.nodes.values() if n.location_id is not None]
-    assert len(loc_nodes) == 31
+    assert len(loc_nodes) == 33
     for mode in (CostMode.DISTANCE, CostMode.TIME):
         for src in loc_nodes:
             for dst in loc_nodes:

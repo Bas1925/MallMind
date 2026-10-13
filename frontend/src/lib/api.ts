@@ -1,8 +1,8 @@
 import type { AssistantResponse, SearchHit } from "@/types/assistant";
 import type { OptimizeResponse } from "@/types/tour";
-import { isApiError, type MallMapPayload, type RouteProfile, type RouteResponse } from "@/types/map";
+import { isApiError, type MallMapPayload, type RouteProfile, type RouteResponse, type SearchAlgorithm } from "@/types/map";
 
-const API_URL = process.env["NEXT_PUBLIC_API_URL"] ?? "http://localhost:8000";
+const API_URL = process.env["NEXT_PUBLIC_API_URL"] ?? "";
 
 export class HttpError extends Error {
   readonly status: number;
@@ -37,8 +37,10 @@ export async function requestRoute(input: {
   fromLocationId: string;
   toLocationId: string;
   profile: RouteProfile;
-}): Promise<RouteResponse> {
+  algorithm?: SearchAlgorithm;
+}, signal?: AbortSignal): Promise<RouteResponse> {
   const res = await fetch(`${API_URL}/api/v1/navigation/route`, {
+    ...(signal === undefined ? {} : { signal }),
     method: "POST",
     headers: { "Content-Type": "application/json" },
     cache: "no-store",
@@ -47,6 +49,7 @@ export async function requestRoute(input: {
       to_location_id: input.toLocationId,
       profile: input.profile,
       cost_mode: "distance",
+      algorithm: input.algorithm ?? "astar",
     }),
   });
   const body: unknown = await parseJson(res);
@@ -57,9 +60,12 @@ export async function requestRoute(input: {
   return body as RouteResponse;
 }
 
-export async function searchLocations(query: string): Promise<SearchHit[]> {
+export async function searchLocations(query: string, signal?: AbortSignal): Promise<SearchHit[]> {
   const params = new URLSearchParams({ q: query, mall: "nova-mall" });
-  const res = await fetch(`${API_URL}/api/v1/search?${params.toString()}`, { cache: "no-store" });
+  const res = await fetch(`${API_URL}/api/v1/search?${params.toString()}`, {
+    cache: "no-store",
+    ...(signal === undefined ? {} : { signal }),
+  });
   const body: unknown = await parseJson(res);
   if (!res.ok) {
     if (isApiError(body)) throw new HttpError(res.status, body.code, body.message);
@@ -73,7 +79,7 @@ export async function askAssistant(input: {
   message: string;
   currentLocationId: string | null;
   profile: RouteProfile;
-}): Promise<AssistantResponse> {
+}, signal?: AbortSignal): Promise<AssistantResponse> {
   const payload: Record<string, string> = {
     message: input.message,
     routing_profile: input.profile,
@@ -82,6 +88,7 @@ export async function askAssistant(input: {
     payload["current_location_id"] = input.currentLocationId;
   }
   const res = await fetch(`${API_URL}/api/v1/assistant/query`, {
+    ...(signal === undefined ? {} : { signal }),
     method: "POST",
     headers: { "Content-Type": "application/json" },
     cache: "no-store",

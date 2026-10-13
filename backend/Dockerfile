@@ -23,10 +23,11 @@ WORKDIR /app
 # Install only prod deps declared in pyproject.toml.
 # Copy the package sources before `pip install .` so setuptools can find `app`.
 COPY pyproject.toml ./
+COPY requirements-lock.txt ./
 COPY app ./app
 COPY alembic.ini ./
 COPY alembic ./alembic
-RUN pip install --upgrade pip && pip install .
+RUN pip install -r requirements-lock.txt && pip install --no-deps .
 
 # Drop privileges.
 RUN useradd --create-home --uid 1000 app && chown -R app:app /app

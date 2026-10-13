@@ -18,27 +18,27 @@ function iconFor(step: string): IconName {
 export function RouteInstructions({ instructions }: RouteInstructionsProps) {
   if (instructions.length === 0) return null;
   return (
-    <ol data-testid="route-instructions" className="rise relative space-y-1">
+    <ol data-testid="route-instructions" className="rise relative rounded-2xl border border-ink-600 bg-ink-850 p-4">
       {instructions.map((step, i) => {
         const last = i === instructions.length - 1;
         const icon = iconFor(step);
         return (
-          <li key={`${i}-${step}`} className="relative flex gap-3 pb-3">
+          <li key={`${i}-${step}`} className="relative flex gap-3 pb-4 last:pb-0">
             {!last ? (
-              <span className="absolute start-[15px] top-8 h-[calc(100%-1.5rem)] w-px bg-white/[0.08]" aria-hidden />
+              <span className="absolute start-[15px] top-8 h-[calc(100%-1.5rem)] w-px bg-ink-600" aria-hidden />
             ) : null}
             <span
               className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${
                 icon === "flag"
-                  ? "border-rose-400/50 bg-rose-400/10 text-rose-400"
+                  ? "border-gold-400/30 bg-gold-400 text-white"
                   : icon === "walk"
-                    ? "border-white/[0.08] bg-ink-800 text-mist-400"
-                    : "border-gold-400/40 bg-gold-400/10 text-gold-300"
+                    ? "border-ink-600 bg-ink-900 text-mist-300"
+                    : "border-gold-400/25 bg-ink-900 text-gold-400"
               }`}
             >
               <Icon name={icon} size={15} />
             </span>
-            <span className="pt-1.5 text-sm text-mist-200">
+            <span className={`pt-1 text-[13px] leading-relaxed ${icon === "flag" ? "font-medium text-mist-50" : "text-mist-200"}`}>
               <span className="sr-only">{i + 1}. </span>
               {step}
             </span>

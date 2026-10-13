@@ -50,6 +50,11 @@ services:
       ENVIRONMENT: ${ENVIRONMENT:-development}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      # The portfolio demo works without API keys or model downloads.
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-none}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
     ports:
       - "8000:8000"
     volumes:
@@ -67,9 +72,9 @@ services:
     container_name: mallmind-frontend
     restart: unless-stopped
     environment:
-      # Browser-visible API URL. Browser runs on the host, so `localhost:8000`
-      # points at the published backend port.
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      # Same-origin requests also work when opening the site on a phone.
+      NEXT_PUBLIC_API_URL: ""
+      API_PROXY_URL: http://backend:8000
       NODE_ENV: development
     ports:
       - "3000:3000"

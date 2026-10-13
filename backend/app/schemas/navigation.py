@@ -16,6 +16,7 @@ class RouteRequest(BaseModel):
     to_location_id: uuid.UUID
     profile: RouteProfile = RouteProfile.NORMAL
     cost_mode: CostMode = CostMode.DISTANCE
+    algorithm: str = "astar"
 
 
 class OptimizeRequest(BaseModel):
@@ -99,3 +100,4 @@ class RouteResponse(BaseModel):
     from_location: str
     to_location: str
     node_ids: list[uuid.UUID] = Field(default_factory=list)
+    visited_ids: list[uuid.UUID] = Field(default_factory=list)

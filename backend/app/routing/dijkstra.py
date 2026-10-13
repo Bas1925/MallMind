@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import heapq
 import uuid
+from dataclasses import replace
 
 from app.routing.policy import EdgeFilter, allow_all, edge_cost
 from app.routing.types import CostMode, GraphEdge, MallGraph, RouteResult
@@ -38,6 +39,7 @@ def dijkstra(
     dist: dict[uuid.UUID, float] = {start: 0.0}
     prev_edge: dict[uuid.UUID, GraphEdge] = {}
     expanded = 0
+    order: list[uuid.UUID] = []
     heap: list[tuple[float, int, uuid.UUID]] = []
     seq = 0
     heapq.heappush(heap, (0.0, seq, start))
@@ -48,9 +50,13 @@ def dijkstra(
         if current in closed:
             continue
         closed.add(current)
+        order.append(current)
         expanded += 1
         if current == goal:
-            return _reconstruct(graph, start, goal, prev_edge, algo, expanded)
+            return replace(
+                _reconstruct(graph, start, goal, prev_edge, algo, expanded),
+                visited_ids=tuple(order),
+            )
         if cost_so_far > dist.get(current, float("inf")):
             continue
         for edge in graph.neighbors(current):
@@ -66,7 +72,7 @@ def dijkstra(
                 seq += 1
                 heapq.heappush(heap, (tentative, seq, nxt))
 
-    return RouteResult.fail(algo, "no_path", nodes_expanded=expanded)
+    return RouteResult.fail(algo, "no_path", nodes_expanded=expanded, visited_ids=tuple(order))
 
 
 def _reconstruct(

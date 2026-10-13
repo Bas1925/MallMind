@@ -1,0 +1,22 @@
+name: publication-safety
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  source-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test publication guard
+        run: node --test scripts/check-publication.test.mjs
+      - name: Inspect source and history without printing credentials
+        run: node scripts/check-publication.mjs --history

@@ -13,10 +13,12 @@ const nextConfig = {
   // walk upwards and get confused by any stray lockfiles higher in the
   // filesystem (common on dev machines with user-level package.json's).
   outputFileTracingRoot: __dirname,
-
-  // Phase 9 (production) will set this to "standalone" for a smaller
-  // Docker image. In Phase 0b we use the default build output.
-  // output: "standalone",
+  output: process.env.NEXT_STANDALONE === "1" ? "standalone" : undefined,
+  poweredByHeader: false,
+  async rewrites() {
+    const origin = process.env.API_PROXY_URL ?? "http://127.0.0.1:8000";
+    return [{ source: "/api/:path*", destination: `${origin}/api/:path*` }];
+  },
 };
 
 export default nextConfig;
