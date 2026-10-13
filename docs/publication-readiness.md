@@ -1,12 +1,26 @@
-# Publication preparation — 13 October 2026
+# Publication and verification — 13 October 2026
 
-Publication destination: [Bas1925/MallMind](https://github.com/Bas1925/MallMind). This report preserves the pre-push preparation evidence below; [GitHub Actions](https://github.com/Bas1925/MallMind/actions) is the source for subsequent remote verification.
+Published repository: [Bas1925/MallMind](https://github.com/Bas1925/MallMind), public, with `main` as the default branch. This report records both local preparation and the subsequent [GitHub Actions](https://github.com/Bas1925/MallMind/actions) verification.
 
 ## Status
 
-At the time of the preparation review, the project was local-only and the destination was still required. The user subsequently authorized creation and publication of the repository linked above. Public application hosting remains unconfigured. Existing user changes were preserved; no history rewrite was performed.
+The user authorized creation and publication of the repository linked above. The reviewed project was committed and pushed normally; existing user changes were preserved and no history rewrite was performed. Public application hosting remains unconfigured.
 
 The project is a synthetic mall-navigation prototype. A real mall, real customers, live positioning and a paid model are not prerequisites for demonstrating its algorithms or interaction design.
+
+## Verified on GitHub
+
+The initial publication commit was `5072287`. The first Linux frontend installations exposed two missing peer-dependency records in the npm lockfile. Commit `066c01f` regenerated the lockfile with npm 10.9.9, adding those records without changing any existing package versions. No checks were disabled or relaxed.
+
+| Workflow | Observed result | Evidence |
+| --- | --- | --- |
+| Backend | Lint/format passed; 126 tests passed, 0 skipped; 76% reported coverage | [Run on `5072287`](https://github.com/Bas1925/MallMind/actions/runs/38414189595) |
+| Frontend | Lint, strict types, production build and all 52 component/unit tests passed | [Run on `066c01f`](https://github.com/Bas1925/MallMind/actions/runs/38415220085) |
+| Browser journeys | All 20 tests passed across desktop and mobile Chromium emulation, with retries disabled | [Run on `066c01f`](https://github.com/Bas1925/MallMind/actions/runs/38415219977) |
+| Production containers | Images built; migrations, seed, startup, page and same-origin API checks passed | [Run on `066c01f`](https://github.com/Bas1925/MallMind/actions/runs/38415220009) |
+| Publication safety | Guard tests and source/history checks passed | [Run on `066c01f`](https://github.com/Bas1925/MallMind/actions/runs/38415220360) |
+
+The backend did not rerun for the frontend-lockfile-only change because its workflow uses path filters; its source is unchanged from the successful backend run. The production dependency audit reported **0 known vulnerabilities**. The full install still reported **9 development-tool dependency findings (2 moderate, 7 high)**; these remain a maintenance follow-up, not a claim of a clean full-tree security audit. The backend run also retained the async connection-cancellation warning noted below.
 
 ## Completed in this pass
 
@@ -18,7 +32,7 @@ The project is a synthetic mall-navigation prototype. A real mall, real customer
 - Updated README/case-study measurements for the current graph and added a standalone CV entry, demo guide, and publication checklist.
 - Recorded an actual **63.48-second silent demo** at 1440×900 against the real local API/database. The 4.38 MB WebM is in `.validation/mallmind-demo.webm`; it is intentionally not committed or uploaded. The recording script can reproduce it.
 
-## Fresh checks
+## Local preparation checks
 
 | Check | Observed result |
 | --- | --- |
@@ -42,10 +56,10 @@ The backend test database was created separately from the demo database. No demo
 
 - The guard is a limited preflight, not a complete secret/security audit. It does not recognize arbitrary passwords, personal information in screenshots, or every credential format.
 - The async database warning remains a test-harness follow-up; it was not hidden or counted as a failed test.
-- The earlier same-day production build is unchanged at the UI-source level in this pass. The new recording command is tooling only. No new production build or dependency audit is claimed here.
-- Docker's Linux engine is not running on this host, so configuration validation is not a container build/smoke success. Run the configured production smoke workflow after publication.
-- GitHub-hosted Actions, public hosting, physical-device testing and an uploaded video link remain unverified. There are no fabricated success badges or live URLs.
-- The destination repository is now specified. Complete the normal non-force push and inspect actual workflow results; use the real repository link in the CV and add demo/video URLs only after they are publicly available.
+- Local Docker configuration validation was not a local container build: Docker's Linux engine was unavailable on this host. The separate GitHub-hosted container build/smoke run above subsequently passed.
+- The full development-tool dependency audit is not clean; the passing production-only audit does not cover those development packages.
+- Public application hosting, physical-device testing and a publicly uploaded walkthrough video remain unverified. Browser mobile emulation is not a physical-device test.
+- Use the real repository link in the CV. Add demo/video URLs only after they are publicly available; localhost is not a public demo.
 
 ## Handoff files
 

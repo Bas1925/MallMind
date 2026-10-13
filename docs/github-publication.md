@@ -33,4 +33,4 @@ Publish the **mallmind/** repository containing this README, not the parent mall
 
 The database created inside CI is disposable. Do not point integration tests or forced seeding at an existing personal or production database. The production smoke job's volume deletion applies only to its isolated CI project.
 
-See [publication-readiness.md](publication-readiness.md) for what was actually checked locally and what still needs the destination repository.
+See [publication-readiness.md](publication-readiness.md) for the local checks, successful hosted workflow runs, and remaining limitations after publication.

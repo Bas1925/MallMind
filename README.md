@@ -58,7 +58,7 @@ These are reproducible experiments, not general performance guarantees or real-c
 
 ## Verification
 
-Local verification is recorded in [the publication preparation report](docs/publication-readiness.md). The improvements cover delayed requests, keyboard search, trip editing, parking persistence, accessible routing, and desktop/mobile browser journeys against a real API and PostgreSQL.
+Local and GitHub-hosted verification is recorded in [the publication report](docs/publication-readiness.md), with links to the successful workflow runs: 126 backend tests, 52 frontend tests, 20 desktop/mobile browser journeys, and a production-container smoke test. The improvements cover delayed requests, keyboard search, trip editing, parking persistence, and accessible routing against a real API and PostgreSQL.
 
 GitHub Actions workflows run from the actual repository root. Check [the current workflow results](https://github.com/Bas1925/MallMind/actions) for hosted verification; the local results in the report are separate evidence.
 

@@ -23,5 +23,5 @@ Use the GitHub link above in the CV. Add a live demo or a reviewed walkthrough v
 - NOVA Mall and its map are synthetic. No real indoor positioning, surveyed mall, or commercial deployment is implied.
 - The verified assistant baseline uses lexical retrieval and multilingual templates, not a verified hosted chat model.
 - The measured improvement is one reproducible example, not an average customer result.
-- GitHub Actions is configured; claim successful remote CI only after the actual run succeeds.
+- GitHub Actions passed the published backend, frontend, browser and production-container checks; see the linked run evidence in [the publication report](publication-readiness.md). This is not a complete security or accessibility audit.
 - Be ready to explain the implementation, tradeoffs, tests, and any assistance used to build it.
